@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>metaTmdb.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/metaTmdb.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#config">config</a>
+      </div>
+      <div class="heading h2">
+        <a href="#validate">validate</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>metaTmdb.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;underscore&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./fs.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">async</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">tmdb</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;moviedb&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Levenshtein</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;levenshtein&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">S</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;string&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">getConductor</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./getConductor.js&#39;</span><span class="p">);</span>
+
+
+<span class="kd">var</span> <span class="nx">checkNfo</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">checkPath</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">getName</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">getYear</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">queryTmdb</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">validate</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="config">
+  <h2>
+    <a href="#config" name="config" class="pilcrow">&#182;</a>
+    config
+  </h2>
+</div>
+
+
+<p>define options specific to this module</p>
+  </div>
+  <div class="body"><ul>
+<li>tolerateDistance - there's a Levenshtein algorithm which calculates the
+'distance' between two strings which I think is the number of edits
+required to change one string to the other.. so I think it's the number
+of characters added or removed specify an integer.</li>
+<li>ignoreCache - defined in <code>./config.js</code></li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">config</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+  <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">apiKey</span><span class="o">:</span> <span class="p">[</span>
+      <span class="s1">&#39;a&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;tmdb api key&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;string&#39;</span>
+    <span class="p">],</span>
+    <span class="nx">tolerateDistance</span><span class="o">:</span> <span class="p">[</span>
+      <span class="kc">false</span><span class="p">,</span>
+      <span class="s1">&#39;number of changed characters between folder name and movie title&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+      <span class="mi">10</span>
+    <span class="p">]</span>
+  <span class="p">},</span>
+  <span class="nx">validation</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">apiKey</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;tmdb api key required&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">tmdb</span> <span class="o">=</span> <span class="nx">tmdb</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">apiKey</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">tolerateDistance</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;tolerate distance must be less than 30&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="validate">
+  <h2>
+    <a href="#validate" name="validate" class="pilcrow">&#182;</a>
+    validate
+  </h2>
+</div>
+
+
+<p>check whether or not we can retrieve meta for this directory</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">validate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">hasError</span><span class="p">())</span> <span class="p">{</span>
+    <span class="nx">callback</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span>
+    <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">ignoreCache</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+    <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">tmdbCache</span><span class="p">)</span>
+  <span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| using tmdb cache, no refresh&#39;</span><span class="p">);</span>
+    <span class="nx">callback</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span> <span class="c1">// Break series in conductor</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">callback</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="nx">checkNfo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">nfoFile</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">imdbId</span><span class="p">;</span>
+  <span class="nx">nfoFile</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">file</span><span class="p">.</span><span class="nx">extname</span> <span class="o">==</span> <span class="s1">&#39;nfo&#39;</span><span class="p">;</span>
+  <span class="p">});</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nfoFile</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">callback</span><span class="p">();</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">nfoFile</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">nfoFile</span><span class="p">.</span><span class="nx">path</span><span class="p">);</span>
+  <span class="nx">imdbId</span> <span class="o">=</span> <span class="sr">/tt[0-9]{7}/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">nfoFile</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">imdbId</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">callback</span><span class="p">();</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">imdbId</span> <span class="o">=</span> <span class="nx">imdbId</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+  <span class="nx">callback</span><span class="p">();</span>
+<span class="p">};</span>
+<span class="nx">checkPath</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">getName</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">basename</span><span class="p">);</span>
+  <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">year</span> <span class="o">=</span> <span class="nx">getYear</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">basename</span><span class="p">);</span>
+  <span class="nx">callback</span><span class="p">();</span>
+<span class="p">};</span>
+<span class="nx">getName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">source</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">bracket</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">year</span><span class="p">;</span>
+
+
+  <span class="nx">truncateTo</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="sr">/([1-2][9|0|1][0-9]{2})/</span><span class="p">,</span>
+    <span class="sr">/\(/</span><span class="p">,</span>
+    <span class="sr">/720p/</span><span class="p">,</span>
+    <span class="sr">/1080p/</span>
+  <span class="p">];</span>
+
+  <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">truncateTo</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">regex</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">match</span><span class="p">;</span>
+    <span class="nx">match</span> <span class="o">=</span> <span class="nx">regex</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">match</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">match</span><span class="p">.</span><span class="nx">index</span><span class="p">);</span>
+  <span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>Dots as spaces</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\./g</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Underscores as spaces</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\_/g</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>Trailing spaces</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">.</span><span class="nx">trim</span><span class="p">();</span>
+
+  <span class="k">return</span> <span class="nx">name</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">getYear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">year</span><span class="p">;</span>
+  <span class="nx">year</span> <span class="o">=</span> <span class="sr">/([1-2][9|0|1][0-9]{2})/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">source</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">year</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">year</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="nx">queryTmdb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">request</span> <span class="o">=</span> <span class="p">{};</span>
+  <span class="kd">var</span> <span class="nx">endpoint</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">imdbId</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| got imdb id from nfo&#39;</span><span class="p">);</span>
+    <span class="nx">request</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">imdbId</span><span class="p">;</span>
+    <span class="nx">request</span><span class="p">.</span><span class="nx">external_source</span> <span class="o">=</span> <span class="s1">&#39;imdb_id&#39;</span><span class="p">;</span>
+    <span class="nx">endpoint</span> <span class="o">=</span> <span class="s1">&#39;find&#39;</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">request</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">year</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| got name and year from path&#39;</span><span class="p">);</span>
+      <span class="nx">request</span><span class="p">.</span><span class="nx">year</span> <span class="o">=</span> <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">year</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| got name from path (no year)&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">endpoint</span> <span class="o">=</span> <span class="s1">&#39;searchMovie&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">tmdb</span><span class="p">[</span><span class="nx">endpoint</span><span class="p">](</span><span class="nx">request</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">plainName</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;will dump tmdb response for &#39;</span><span class="p">,</span> <span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">);</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;  &#39;</span><span class="p">));</span>
+
+    <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">movie_results</span> <span class="o">||</span> <span class="nx">result</span><span class="p">.</span><span class="nx">results</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">result</span> <span class="o">||</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">result</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| no match found&#39;</span><span class="p">);</span>
+      <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contra</span> <span class="o">=</span> <span class="s1">&#39;tmdb has no matches&#39;</span><span class="p">;</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">imdbId</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">likelyError</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">title</span><span class="p">);</span>
+      <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">likelyError</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Levenshtein</span><span class="p">(</span>
+        <span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">title</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^a-z0-9]/gi</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">(),</span>
+        <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^a-z0-9]/gi</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">()</span>
+      <span class="p">).</span><span class="nx">distance</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span>
+      <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">,</span>
+      <span class="p">{</span>
+        <span class="nx">tmdbCache</span><span class="o">:</span> <span class="kc">true</span>
+      <span class="p">},</span>
+      <span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">);</span>
+    <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">year</span> <span class="o">=</span> <span class="sr">/^[0-9]{4}/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">release_date</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">alternatives</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">alternative</span><span class="p">,</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">alternatives</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nx">alternative</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+        <span class="s1">&#39;: &#39;</span><span class="p">,</span>
+        <span class="nx">alternative</span><span class="p">.</span><span class="nx">title</span>
+      <span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">likelyError</span> <span class="o">&gt;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">tolerateDistance</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contra</span> <span class="o">=</span> <span class="s1">&#39;tmdb has unsuitable matches&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span>
+      <span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span>
+      <span class="s1">&#39;| matched [likely error: &#39;</span><span class="p">,</span>
+      <span class="nx">S</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">likelyError</span><span class="p">).</span><span class="nx">padLeft</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="nx">s</span><span class="p">,</span>
+      <span class="s1">&#39;] [alternatives: &#39;</span><span class="p">,</span>
+      <span class="nx">S</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nx">padLeft</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="nx">s</span><span class="p">,</span>
+      <span class="s1">&#39;]&#39;</span>
+
+    <span class="p">);</span>
+    <span class="nx">callback</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">getConductor</span><span class="p">([</span>
+  <span class="nx">validate</span><span class="p">,</span>
+  <span class="nx">checkNfo</span><span class="p">,</span>
+  <span class="nx">checkPath</span><span class="p">,</span>
+  <span class="nx">queryTmdb</span>
+<span class="p">]);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

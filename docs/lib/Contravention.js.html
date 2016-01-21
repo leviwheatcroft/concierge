@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Contravention.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/Contravention.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#contravention%20module">Contravention module</a>
+      </div>
+      <div class="heading h2">
+        <a href="#defaultmessages">defaultMessages</a>
+      </div>
+      <div class="heading h2">
+        <a href="#contravention%20class">Contravention Class</a>
+      </div>
+      <div class="heading h2">
+        <a href="#contravention.prototype.tojson">Contravention.prototype.toJSON</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="contravention%20module">
+  <h2>
+    <a href="#contravention%20module" name="contravention%20module" class="pilcrow">&#182;</a>
+    Contravention module
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>as in contravenes the convention</p>
+
+<p>a directory extracted from an nzb should follow certain conventions, like
+it contains media files, and the name can be extracted from the path, et
+cetera.</p>
+
+<p>when a directorydoesnt match these criteria, throw a contravention ala
+callback(new Contravention(directory, 'noMedia', 'optional custom message');</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>require &amp; declarations</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Contravention</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">defaultMessages</span><span class="p">;</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="defaultmessages">
+  <h2>
+    <a href="#defaultmessages" name="defaultmessages" class="pilcrow">&#182;</a>
+    defaultMessages
+  </h2>
+</div>
+
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">defaultMessages</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">noMatch</span><span class="o">:</span> <span class="s1">&#39;tmdb has no matches&#39;</span><span class="p">,</span>
+  <span class="nx">noMedia</span><span class="o">:</span> <span class="s1">&#39;directory does not contain media&#39;</span><span class="p">,</span>
+  <span class="nx">volNum</span><span class="o">:</span> <span class="s1">&#39;multiple volumes but no volume numbers&#39;</span><span class="p">,</span>
+  <span class="nx">targetExists</span><span class="o">:</span> <span class="s1">&#39;the target directory already exists&#39;</span><span class="p">,</span>
+  <span class="nx">deleted</span><span class="o">:</span> <span class="s1">&#39;directory has been deleted&#39;</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="contravention%20class">
+  <h2>
+    <a href="#contravention%20class" name="contravention%20class" class="pilcrow">&#182;</a>
+    Contravention Class
+  </h2>
+</div>
+
+
+<p>custom error class, will attach itself to specified directory</p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">class
+</div>
+
+
+<div class="highlight"><pre><code><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_title&quot;</span><span class="o">&gt;</span><span class="nx">Params</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_name&quot;</span><span class="o">&gt;</span><span class="nx">directory</span><span class="o">&lt;</span><span class="err">/span&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_type&quot;</span><span class="o">&gt;</span><span class="nx">Directory</span><span class="o">&lt;</span><span class="err">/span&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="nx">Directory</span> <span class="nx">instance</span> <span class="kd">with</span> <span class="nx">contravention</span><span class="o">&lt;</span><span class="err">/span&gt;</span>
+<span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_name&quot;</span><span class="o">&gt;</span><span class="nx">name</span><span class="o">&lt;</span><span class="err">/span&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_type&quot;</span><span class="o">&gt;</span><span class="nx">string</span><span class="o">&lt;</span><span class="err">/span&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="nx">name</span> <span class="k">for</span> <span class="k">this</span> <span class="nx">contravention</span><span class="p">,</span> <span class="nx">see</span> <span class="o">&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">defaultMessages</span><span class="o">&lt;</span><span class="err">/code&gt;&lt;/span&gt;</span>
+<span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_name&quot;</span><span class="o">&gt;</span><span class="nx">message</span><span class="o">&lt;</span><span class="err">/span&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_type&quot;</span><span class="o">&gt;</span><span class="nx">string</span><span class="o">&lt;</span><span class="err">/span&gt;</span>
+  <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="nx">custom</span> <span class="nx">message</span><span class="p">,</span> <span class="nx">see</span> <span class="o">&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">defaultMessages</span><span class="o">&lt;</span><span class="err">/code&gt;&lt;/span&gt;</span>
+<span class="o">&lt;</span><span class="err">/div&gt;</span>
+</code></pre></div>
+
+
+
+<p></div>
+</div></p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Contravention</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">message</span> <span class="o">||</span> <span class="nx">defaultMessages</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
+  <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| contravention: &#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nx">Contravention</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">Error</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+<span class="nx">Contravention</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Contravention</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="contravention.prototype.tojson">
+  <h2>
+    <a href="#contravention.prototype.tojson" name="contravention.prototype.tojson" class="pilcrow">&#182;</a>
+    Contravention.prototype.toJSON
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>the 'meta' property of a directory instance is written to a .meta file for
+user reference. so when JSON.stringify(directory.meta) is called, it will
+call this method if an instance of Contravention is present in the method.</p>
+
+<p>pretty clever right?</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Contravention</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toJSON</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;] &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="nx">Contravention</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;] &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">Contravention</span><span class="p">;</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

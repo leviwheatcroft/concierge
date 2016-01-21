@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>config.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/config.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#config%20module">config module</a>
+      </div>
+      <div class="heading h2">
+        <a href="#filteroptions">filterOptions</a>
+      </div>
+      <div class="heading h2">
+        <a href="#getcommandline">getCommandLine</a>
+      </div>
+      <div class="heading h2">
+        <a href="#getini">getIni</a>
+      </div>
+      <div class="heading h2">
+        <a href="#init">init</a>
+      </div>
+      <div class="heading h2">
+        <a href="#push">push</a>
+      </div>
+      <div class="heading h3">
+        <a href="#initialisation%20functions">initialisation functions</a>
+      </div>
+      <div class="heading h2">
+        <a href="#push.keys">push.keys</a>
+      </div>
+      <div class="heading h2">
+        <a href="#config">config</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="config%20module">
+  <h2>
+    <a href="#config%20module" name="config%20module" class="pilcrow">&#182;</a>
+    config module
+  </h2>
+</div>
+
+
+<p>manages configuration and the <code>config</code> object used by most modules.</p>
+  </div>
+  <div class="body"><p>there are multiple ways to configure, from lowest to highest priority..</p>
+
+<ul>
+<li>defaults - written in code</li>
+<li>ini file - defined in <code>config.ini</code> or user specified ini</li>
+<li>passed in from command line</li>
+</ul>
+
+<p>just to complicate things, the plugin structure needs to allow configuration
+to occur within the plugin file.. so configuration needs to be able to happen
+in a decentralised way.</p>
+
+<p><code>lib/log.js</code> is a fairly good example of how to use configuration</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>require the good stuff</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">_</span>                   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./underscore.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">ini</span>                 <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;ini&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">path</span>                <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">cli</span>                 <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;cli&#39;</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>This is the real, unwrapped one, avoids circular require</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">fs</span>                  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>declaration</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">config</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">getCommandLine</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">getIni</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">filterOptions</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="kd">var</span> <span class="nx">validationFns</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="kd">var</span> <span class="nx">initFns</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="filteroptions">
+  <h2>
+    <a href="#filteroptions" name="filteroptions" class="pilcrow">&#182;</a>
+    filterOptions
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>this is a convenience function to deal with the fact that readIni and
+commander both return an object with various methods and properties which
+are not actually part of this app's configuration. so when you run readIni
+and commander, you can run the result through this function to strip out
+<em>most</em> of the nonsense.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">list</span>
+      <span class="dox_type">object</span>
+      <span>settings object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">filterOptions</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">list</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">_</span><span class="p">.</span><span class="nx">omit</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="o">||</span>
+      <span class="p">(</span><span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">key</span><span class="p">))</span>
+    <span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="getcommandline">
+  <h2>
+    <a href="#getcommandline" name="getcommandline" class="pilcrow">&#182;</a>
+    getCommandLine
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>use a <a href="https://www.npmjs.com/package/cli">cli</a> instance to
+handle fancy cli stuff. Also attach options defined in other modules using
+<code>config.push</code></p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">getCommandLine</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">cli</span><span class="p">.</span><span class="nx">enable</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;help&#39;</span><span class="p">);</span>
+  <span class="nx">options</span><span class="p">.</span><span class="nx">configFile</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;c&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;specify config file&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;file&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;./config.ini&#39;</span>
+  <span class="p">];</span>
+  <span class="nx">push</span><span class="p">(</span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./configShared&#39;</span><span class="p">));</span>
+  <span class="nx">cli</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="nx">cli</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>command.option(
+'--err-no-match [action]',
+'action where movie cannot be identified',
+/^(leave|delete)$/i
+);
+command.option(
+'--err-vol-num [action]',
+'action where multiple volumes are not numbered',
+/^(leave|delete)$/i
+);
+command.option(
+'--err-target-exists [action]',
+'action where target directory / movie already exists',
+/^(leave|delete)$/i
+);</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="getini">
+  <h2>
+    <a href="#getini" name="getini" class="pilcrow">&#182;</a>
+    getIni
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>load config from ini file</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">[configFile=config.ini]</span>
+      <span class="dox_type">string</span>
+      <span>path to ini file</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">getIni</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">configFile</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">iniFile</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>Find config file</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">configFile</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="nx">configFile</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="s1">&#39;cant find config: &#39;</span> <span class="o">+</span> <span class="nx">configFile</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">configFile</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span>
+      <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span>
+      <span class="s1">&#39;config.ini&#39;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">iniFile</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">configFile</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">);</span>
+  <span class="nx">iniFile</span> <span class="o">=</span> <span class="nx">ini</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">iniFile</span><span class="p">);</span>
+  <span class="nx">iniFile</span> <span class="o">=</span> <span class="nx">filterOptions</span><span class="p">(</span><span class="nx">iniFile</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">iniFile</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="init">
+  <h2>
+    <a href="#init" name="init" class="pilcrow">&#182;</a>
+    init
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>defaults doesn't work how it might appear, it's not really defaults or extend
+or whatever.</p>
+
+<p>note: <code>_.compactObject</code> method may introduce problems, falsy values are
+not passed to <code>config</code> object. <code>cli</code> module allows you to set defaults,
+if a default is falsy, it will not end up on <code>config</code> it will be <code>undefined</code></p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">cliOptions</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">iniOptions</span><span class="p">;</span>
+
+  <span class="nx">cliOptions</span> <span class="o">=</span> <span class="nx">getCommandLine</span><span class="p">();</span>
+  <span class="nx">iniOptions</span> <span class="o">=</span> <span class="nx">getIni</span><span class="p">(</span><span class="nx">cliOptions</span><span class="p">.</span><span class="nx">configFile</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>cli options overwrite iniFile, which overwrite defaults</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="nx">iniOptions</span><span class="p">,</span> <span class="nx">_</span><span class="p">.</span><span class="nx">compactObject</span><span class="p">(</span><span class="nx">cliOptions</span><span class="p">));</span>
+
+  <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">validationFns</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">fn</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">initFns</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">fn</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="push">
+  <h2>
+    <a href="#push" name="push" class="pilcrow">&#182;</a>
+    push
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>see lib/fsItems.js for example usage.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">definition</span>
+      <span class="dox_type">Object</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">definition.options</span>
+      <span class="dox_type">Object</span>
+      <span>cli style arrays</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">[definition.validation]</span>
+      <span class="dox_type">Function</span>
+      <span>validation function</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">[definition.init]</span>
+      <span class="dox_type">Function</span>
+      <span>initialisation function
+
+
+<div class="pilwrap" id="initialisation%20functions">
+  <h3>
+    <a href="#initialisation%20functions" name="initialisation%20functions" class="pilcrow">&#182;</a>
+    initialisation functions
+  </h3>
+</div>
+
+
+will be passed completed config object
+
+<div class='highlight'><pre><code language=''>function(config) {
+  // initialise module
+}
+</code></pre></div></span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">push</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">definition</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">definition</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">definition</span><span class="p">.</span><span class="nx">validation</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">validationFns</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">definition</span><span class="p">.</span><span class="nx">validation</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">definition</span><span class="p">.</span><span class="nx">init</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">initFns</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">definition</span><span class="p">.</span><span class="nx">init</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="push.keys">
+  <h2>
+    <a href="#push.keys" name="push.keys" class="pilcrow">&#182;</a>
+    push.keys
+  </h2>
+</div>
+
+
+<p>here for reference, convenience</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">push</span><span class="p">.</span><span class="nx">keys</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span> <span class="s1">&#39;validation&#39;</span><span class="p">,</span> <span class="s1">&#39;init&#39;</span> <span class="p">];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="config">
+  <h2>
+    <a href="#config" name="config" class="pilcrow">&#182;</a>
+    config
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>initialize the object here.. this ensures the <code>init</code> and <code>push</code> methods
+are always present even after calling <code>init</code> to populate it.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">init</span><span class="o">:</span> <span class="nx">init</span><span class="p">,</span>
+  <span class="nx">push</span><span class="o">:</span> <span class="nx">push</span><span class="p">,</span>
+  <span class="nx">options</span><span class="o">:</span> <span class="nx">options</span>
+<span class="p">};</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">config</span><span class="p">;</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

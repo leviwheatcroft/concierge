@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>plugins.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/plugins.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#stages">stages</a>
+      </div>
+      <div class="heading h2">
+        <a href="#init">init</a>
+      </div>
+      <div class="heading h2">
+        <a href="#stage">stage</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>plugins.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+<p>required things</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">async</span>               <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">requireDir</span>          <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;require-dir&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">_</span>                   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./underscore&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">log</span>                 <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">getConductor</span>        <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./getConductor&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>declarations</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">stages</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="stages">
+  <h2>
+    <a href="#stages" name="stages" class="pilcrow">&#182;</a>
+    stages
+  </h2>
+</div>
+
+
+<p>a list of the valid plugin types or stages</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">stages</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="s1">&#39;primary&#39;</span>
+<span class="p">];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="init">
+  <h2>
+    <a href="#init" name="init" class="pilcrow">&#182;</a>
+    init
+  </h2>
+</div>
+
+
+<p>loads plugins, stores them for later retrieval with <code>stage</code> method, inits
+config with configs loaded from plugins</p>
+  </div>
+  <div class="body"><p><code>config.push</code> is used to collate the settings defined within plugins and
+modules.</p>
+
+<p>this fn is called before <code>config.init</code>, so log fns won't work..</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">plugins</span><span class="p">;</span>
+
+  <span class="nx">plugins</span> <span class="o">=</span> <span class="nx">requireDir</span><span class="p">(</span><span class="s1">&#39;./plugins&#39;</span><span class="p">);</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s1">&#39;loading plugins&#39;</span><span class="p">);</span>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">plugins</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">plugin</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">config</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">pick</span><span class="p">(</span><span class="nx">plugin</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nx">keys</span><span class="p">));</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">collate</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="nx">_</span><span class="p">.</span><span class="nx">omit</span><span class="p">(</span><span class="nx">plugin</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nx">keys</span><span class="p">));</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="stage">
+  <h2>
+    <a href="#stage" name="stage" class="pilcrow">&#182;</a>
+    stage
+  </h2>
+</div>
+
+
+<p>wraps all plugins for given stage, see <code>stages</code> for valid stages</p>
+
+<p>@param {string} stage
+@return {function}</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">primary</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">getConductor</span><span class="p">(</span><span class="nx">events</span><span class="p">.</span><span class="nx">primary</span><span class="p">).</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>export</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">init</span><span class="o">:</span> <span class="nx">init</span><span class="p">,</span>
+  <span class="nx">primary</span><span class="o">:</span> <span class="nx">primary</span>
+<span class="p">};</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

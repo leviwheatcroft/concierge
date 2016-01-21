@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>meta.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/meta.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#meta%20module">meta module</a>
+      </div>
+      <div class="heading h2">
+        <a href="#require%20%26amp%3B%20declarations">require &amp; declarations</a>
+      </div>
+      <div class="heading h2">
+        <a href="#config">config</a>
+      </div>
+      <div class="heading h2">
+        <a href="#store">store</a>
+      </div>
+      <div class="heading h2">
+        <a href="#retrieve">retrieve</a>
+      </div>
+      <div class="heading h2">
+        <a href="#module.exports">module.exports</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="meta%20module">
+  <h2>
+    <a href="#meta%20module" name="meta%20module" class="pilcrow">&#182;</a>
+    meta module
+  </h2>
+</div>
+
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="require%20%26amp%3B%20declarations">
+  <h2>
+    <a href="#require%20%26amp%3B%20declarations" name="require%20%26amp%3B%20declarations" class="pilcrow">&#182;</a>
+    require &amp; declarations
+  </h2>
+</div>
+
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">path</span>                <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">fs</span>                  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./fs&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">log</span>                 <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">store</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">retrieve</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="config">
+  <h2>
+    <a href="#config" name="config" class="pilcrow">&#182;</a>
+    config
+  </h2>
+</div>
+
+
+<p>deal with configuration options specific to this module</p>
+  </div>
+  <div class="body"><ul>
+<li>noMeta - do not store meta on hard drive</li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">config</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+  <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">noMeta</span><span class="o">:</span> <span class="p">[</span>
+      <span class="kc">false</span><span class="p">,</span>
+      <span class="s1">&#39;don\&#39;t write meta to hard drive&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;true&#39;</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="store">
+  <h2>
+    <a href="#store" name="store" class="pilcrow">&#182;</a>
+    store
+  </h2>
+</div>
+
+
+<p>writes meta to <code>.meta</code> file.
+If you want to store something in meta, make sure it's either readily
+convertible to a string, or that it has a <code>toJSON</code> method</p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">directory</span>
+      <span class="dox_type">Directory</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">store</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">noMeta</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">callback</span><span class="p">();</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">hasError</span><span class="p">(</span><span class="s1">&#39;deleted&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| can not store meta in deleted directory&#39;</span><span class="p">);</span>
+    <span class="nx">callback</span><span class="p">();</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFile</span><span class="p">(</span>
+    <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="s1">&#39;.meta&#39;</span><span class="p">),</span>
+    <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">),</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| stored meta&#39;</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">callback</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">);</span>
+
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="retrieve">
+  <h2>
+    <a href="#retrieve" name="retrieve" class="pilcrow">&#182;</a>
+    retrieve
+  </h2>
+</div>
+
+
+<p>retrieve meta from <code>.meta</code> file</p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">directory</span>
+      <span class="dox_type">Directory</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">retrieve</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span>
+    <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="s1">&#39;.meta&#39;</span><span class="p">),</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| no meta present&#39;</span><span class="p">);</span>
+        <span class="nx">callback</span><span class="p">();</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| found meta&#39;</span><span class="p">);</span>
+      <span class="k">try</span> <span class="p">{</span>
+        <span class="nx">data</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>something wrong with <code>.meta</code> file</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| error in .meta&#39;</span><span class="p">);</span>
+        <span class="nx">callback</span><span class="p">();</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">defaults</span><span class="p">(</span>
+        <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">,</span>
+        <span class="nx">data</span>
+      <span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| &#39;</span><span class="p">,</span> <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">callback</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">);</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="module.exports">
+  <h2>
+    <a href="#module.exports" name="module.exports" class="pilcrow">&#182;</a>
+    module.exports
+  </h2>
+</div>
+
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">store</span><span class="o">:</span> <span class="nx">store</span><span class="p">,</span>
+  <span class="nx">retrieve</span><span class="o">:</span> <span class="nx">retrieve</span>
+<span class="p">};</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

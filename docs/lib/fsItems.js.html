@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>fsItems.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/fsItems.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#fsitems%20module">fsItems module</a>
+      </div>
+      <div class="heading h2">
+        <a href="#config">config</a>
+      </div>
+      <div class="heading h2">
+        <a href="#item%20class">Item Class</a>
+      </div>
+      <div class="heading h2">
+        <a href="#item.determinelogname">Item.determineLogName</a>
+      </div>
+      <div class="heading h2">
+        <a href="#item.prototype.determinetype">Item.prototype.determineType</a>
+      </div>
+      <div class="heading h2">
+        <a href="#directory%20class">Directory Class</a>
+      </div>
+      <div class="heading h3">
+        <a href="#directory.meta">directory.meta</a>
+      </div>
+      <div class="heading h2">
+        <a href="#directory.prototype.setpath">Directory.prototype.setPath</a>
+      </div>
+      <div class="heading h2">
+        <a href="#directory.prototype.getchildren">Directory.prototype.getChildren</a>
+      </div>
+      <div class="heading h3">
+        <a href="#directory.children">directory.children</a>
+      </div>
+      <div class="heading h2">
+        <a href="#directory.prototype.mvtotemp">Directory.prototype.mvToTemp</a>
+      </div>
+      <div class="heading h2">
+        <a href="#directory.prototype.mvtooutput">Directory.prototype.mvToOutput</a>
+      </div>
+      <div class="heading h2">
+        <a href="#directory.prototype.createoutputpath">Directory.prototype.createOutputPath</a>
+      </div>
+      <div class="heading h2">
+        <a href="#directory.prototype.getcanonicalbasename">Directory.prototype.getCanonicalBasename</a>
+      </div>
+      <div class="heading h2">
+        <a href="#directory.prototype.getoutputpath">Directory.prototype.getOutputPath</a>
+      </div>
+      <div class="heading h2">
+        <a href="#directory.prototype.haserror">Directory.prototype.hasError</a>
+      </div>
+      <div class="heading h2">
+        <a href="#directory.prototype.setparent">Directory.prototype.setParent</a>
+      </div>
+      <div class="heading h2">
+        <a href="#file%20class">File Class</a>
+      </div>
+      <div class="heading h2">
+        <a href="#file.prototype.setpath">File.prototype.setPath</a>
+      </div>
+      <div class="heading h2">
+        <a href="#file.prototype.setparent">File.prototype.setParent</a>
+      </div>
+      <div class="heading h2">
+        <a href="#file.prototype.getcanonicalfilename">File.prototype.getCanonicalFilename</a>
+      </div>
+      <div class="heading h2">
+        <a href="#file.prototype.getoutputpath">File.prototype.getOutputPath</a>
+      </div>
+      <div class="heading h2">
+        <a href="#file.prototype.mvtooutput">File.prototype.mvToOutput</a>
+      </div>
+      <div class="heading h2">
+        <a href="#module.exports">module.exports</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="fsitems%20module">
+  <h2>
+    <a href="#fsitems%20module" name="fsitems%20module" class="pilcrow">&#182;</a>
+    fsItems module
+  </h2>
+</div>
+
+
+<div class="dox">
+  <div class="summary"><p>require all the things</p>
+  </div>
+  <div class="body"><p>fancy aligned require block..</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">_</span>                   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;underscore&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">fs</span>                  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./fs&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">path</span>                <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">async</span>               <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">format</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;string-format&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">getConductor</span>        <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./getConductor&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Walker</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./walkDepth&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">log</span>                 <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">s</span>                   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;string&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Contravention</span>       <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./Contravention&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>declaration block</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">Item</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">Directory</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">File</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="config">
+  <h2>
+    <a href="#config" name="config" class="pilcrow">&#182;</a>
+    config
+  </h2>
+</div>
+
+
+<p>deal with configuration options specific to this module</p>
+  </div>
+  <div class="body"><ul>
+<li>output directory</li>
+<li>otherExtensions</li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">config</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+  <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">output</span><span class="o">:</span> <span class="p">[</span>
+      <span class="s1">&#39;o&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;output directory&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;inPlace&#39;</span>
+    <span class="p">],</span>
+    <span class="nx">otherExtensions</span><span class="o">:</span> <span class="p">[</span>
+      <span class="kc">false</span><span class="p">,</span>
+      <span class="s1">&#39;other extensions for files you\&#39;d like to keep. eg: \&#39;jpg, sfv\&#39;&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;string&#39;</span>
+    <span class="p">]</span>
+  <span class="p">},</span>
+  <span class="nx">validation</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>fix lower case p cludges</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">output</span> <span class="o">==</span> <span class="s1">&#39;inplace&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">config</span><span class="p">.</span><span class="nx">output</span> <span class="o">=</span> <span class="s1">&#39;inPlace&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>check output path</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">if</span> <span class="p">(</span>
+      <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">output</span> <span class="o">!=</span> <span class="s1">&#39;inPlace&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+      <span class="p">(</span><span class="o">!</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">output</span><span class="p">))</span>
+    <span class="p">)</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">throwError</span><span class="p">(</span><span class="s1">&#39;output directory does not exist&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>convert otherExtensions to array</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">otherExtensions</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">config</span><span class="p">.</span><span class="nx">otherExtensions</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">otherExtensions</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+      <span class="nx">config</span><span class="p">.</span><span class="nx">otherExtensions</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">otherExtensions</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">config</span><span class="p">.</span><span class="nx">otherExtensions</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="p">}</span>
+    <span class="nx">config</span><span class="p">.</span><span class="nx">otherExtensions</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">union</span><span class="p">(</span>
+      <span class="nx">config</span><span class="p">.</span><span class="nx">otherExtensions</span><span class="p">,</span>
+      <span class="p">[</span> <span class="s1">&#39;nfo&#39;</span> <span class="p">]</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="item%20class">
+  <h2>
+    <a href="#item%20class" name="item%20class" class="pilcrow">&#182;</a>
+    Item Class
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Item is the parent class for Directory and File Class, it takes care of some
+commonly used properties:</p>
+
+<p>consider a path like <code>/srv/media/Lion.King.(2015)/Lion.King.avi</code>
+you'd end up with these properties:</p>
+
+<ul>
+<li>path <em>absolute path</em> <code>/srv/media/Lion.King/Lion.King.avi</code></li>
+<li>basename <em>filename no ext</em> <code>Lion.King</code></li>
+<li>extname <em>extension</em> <code>avi</code></li>
+<li>dirname <em>parent dir</em> <code>/srv/media/Lion.King.(2015)</code></li>
+<li>logname <em>short &amp; pretty</em> <code>LionKing.avi</code></li>
+<li>isDirectory <em>boolean</em> <code>true</code></li>
+<li>isFile <em>boolean</em> <code>false</code></li>
+</ul>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">class</div>
+    <div class="dox_tag_detail">
+    </div>
+    <div class="dox_tag_title">classdesc</div>
+    <div class="dox_tag_detail">
+      <span>common properties and methods for Directory and File classes</span>
+    </div>
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">properties</span>
+      <span class="dox_type">object</span>
+      <span>Properties to attach to instance</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">properties.path</span>
+      <span class="dox_type">string</span>
+      <span>relative or absolute path to item</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">properties.stat</span>
+      <span class="dox_type">Object</span>
+      <span>A stat object as generated by <code>fs.stat</code></span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Item</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">properties</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">{</span> <span class="nx">meta</span><span class="o">:</span> <span class="p">{}</span> <span class="p">},</span> <span class="nx">properties</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="sr">/^\//</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">cwd</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">throwError</span><span class="p">(</span><span class="s1">&#39;path does not exist&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">stat</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">stat</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">statSync</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">setPath</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">determineLogName</span><span class="p">();</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">determineType</span><span class="p">();</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+    <span class="nx">path</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span>
+    <span class="nx">extname</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">extname</span><span class="p">,</span>
+    <span class="nx">basename</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">basename</span><span class="p">,</span>
+    <span class="nx">dirname</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">dirname</span><span class="p">,</span>
+    <span class="nx">logName</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">logName</span>
+  <span class="p">},</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;  &#39;</span><span class="p">));</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="item.determinelogname">
+  <h2>
+    <a href="#item.determinelogname" name="item.determinelogname" class="pilcrow">&#182;</a>
+    Item.determineLogName
+  </h2>
+</div>
+
+
+<p>create a nice string suitable for log files.. because usenet release file
+names are so unwieldy...</p>
+  </div>
+  <div class="body"><ul>
+<li>try to remove years</li>
+<li>remove media types like 720p etc</li>
+<li>camel case</li>
+<li>truncate to 20 characters with <code>...</code> where appropriate</li>
+<li>right align the file extension</li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Item</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">determineLogName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">logName</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">match</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>Discard everything from 3 consecutive digits (year, 720p 1080p etc)</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">match</span> <span class="o">=</span> <span class="sr">/^(.*?)[0-9]{3}/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">basename</span><span class="p">);</span>
+  <span class="nx">logName</span> <span class="o">=</span> <span class="nx">match</span> <span class="o">?</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">basename</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>Discard non word</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">logName</span> <span class="o">=</span> <span class="nx">logName</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\W/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Attach extension</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">logName</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">extname</span> <span class="o">?</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">extname</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">logName</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">logName</span> <span class="o">=</span> <span class="nx">s</span><span class="p">(</span><span class="nx">logName</span><span class="p">).</span><span class="nx">padRight</span><span class="p">(</span><span class="nx">length</span><span class="p">).</span><span class="nx">s</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>this was the best way I could think of to right align the extensions..
+sorry.
+Join the first bit to the last bit with '...' in between</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">logName</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="nx">logName</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">length</span> <span class="o">-</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">extname</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)),</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">extname</span> <span class="o">?</span> <span class="nx">logName</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">extname</span><span class="p">.</span><span class="nx">length</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">logName</span> <span class="o">=</span> <span class="nx">logName</span><span class="p">;</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="item.prototype.determinetype">
+  <h2>
+    <a href="#item.prototype.determinetype" name="item.prototype.determinetype" class="pilcrow">&#182;</a>
+    Item.prototype.determineType
+  </h2>
+</div>
+
+
+<p>sets Item.type property to a string which describes the type of this instance</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Item</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">determineType</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">media</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">subtitle</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">other</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">tests</span><span class="p">;</span>
+  <span class="nx">media</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mkv&#39;</span><span class="p">,</span> <span class="s1">&#39;mp4&#39;</span><span class="p">,</span> <span class="s1">&#39;avi&#39;</span><span class="p">];</span>
+  <span class="nx">subtitle</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sub&#39;</span><span class="p">,</span> <span class="s1">&#39;srt&#39;</span><span class="p">];</span>
+  <span class="nx">other</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">otherExtensions</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>define tests, each property will return a boolean
+not super efficient because all tests are run on each instance, even if
+the first one is true. The only alternative I could think of was a long
+winded if else if structure</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">tests</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">subdirectory</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">stat</span><span class="p">.</span><span class="nx">isDirectory</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">,</span>
+    <span class="nx">directory</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">stat</span><span class="p">.</span><span class="nx">isDirectory</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">,</span>
+    <span class="nx">media</span><span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">media</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">extname</span><span class="p">),</span>
+    <span class="nx">subtitle</span><span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">subtitle</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">extname</span><span class="p">),</span>
+    <span class="nx">other</span><span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">extname</span><span class="p">)</span>
+  <span class="p">};</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">findKey</span><span class="p">(</span><span class="nx">tests</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+  <span class="p">})</span> <span class="o">||</span> <span class="s1">&#39;junk&#39;</span><span class="p">;</span>
+
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="directory%20class">
+  <h2>
+    <a href="#directory%20class" name="directory%20class" class="pilcrow">&#182;</a>
+    Directory Class
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>the directory class contains:</p>
+
+<ul>
+<li>properties describing the directory (path et cetera)
+<ul><li>a <code>children</code> property</li>
+<li>a <code>meta</code> property</li>
+<li>methods relating to this directory as it exists on the hard drive</li></ul></li>
+</ul>
+
+<p>I'd like to limit the directory class to these concepts to avoid it becoming
+some sort of god class.</p>
+
+<p>instantiate with the same params as Item Class</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">class</div>
+    <div class="dox_tag_detail">
+    </div>
+    <div class="dox_tag_title">classdesc</div>
+    <div class="dox_tag_detail">
+      <span>object describing a directory
+
+
+<div class="pilwrap" id="directory.meta">
+  <h3>
+    <a href="#directory.meta" name="directory.meta" class="pilcrow">&#182;</a>
+    directory.meta
+  </h3>
+</div>
+
+
+every directory instance should contain a meta property which contains:
+
+<ul>
+<li>meta generated by avprobe, like av codecs, bitrates, length, et cetera</li>
+<li>meta retrieved from tmdb, like title, release date, et cetera</li>
+<li>other information about the directory which may need to be stored between
+concierge runs.</li>
+</ul></span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">Item</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+
+  <span class="nx">_</span><span class="p">.</span><span class="nx">defaults</span><span class="p">(</span>
+    <span class="k">this</span><span class="p">,</span>
+    <span class="p">{</span>
+      <span class="nx">ignoreMetaCache</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+      <span class="nx">ignoreTmdbCache</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+      <span class="nx">children</span><span class="o">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+  <span class="p">);</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>these two lines are the only way I could reliably extend a class from
+another's prototype. <code>Util.inherits</code> is supposed to work, but I couldn't get
+it to.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">Item</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Directory</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="directory.prototype.setpath">
+  <h2>
+    <a href="#directory.prototype.setpath" name="directory.prototype.setpath" class="pilcrow">&#182;</a>
+    Directory.prototype.setPath
+  </h2>
+</div>
+
+
+<p>this method simply sets the <code>path</code> property and breaks it into the other
+relevant properties like <code>basename</code> and <code>dirname</code></p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">folderPath</span>
+      <span class="dox_type">string</span>
+      <span>absolute or relative path</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setPath</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">folderPath</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">folderPath</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">extname</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">basename</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">basename</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">dirname</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">dirname</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">);</span>
+<span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="directory.prototype.getchildren">
+  <h2>
+    <a href="#directory.prototype.getchildren" name="directory.prototype.getchildren" class="pilcrow">&#182;</a>
+    Directory.prototype.getChildren
+  </h2>
+</div>
+
+
+<p>use a walker to get children of this directory</p>
+  </div>
+  <div class="body">
+<div class="pilwrap" id="directory.children">
+  <h3>
+    <a href="#directory.children" name="directory.children" class="pilcrow">&#182;</a>
+    directory.children
+  </h3>
+</div>
+
+
+<p>every instance of <code>Directory</code> should have a <code>children</code> property which is an
+array of either <code>Directory</code> or <code>File</code> instances.
+the <code>children</code> property contains all direct and indirect children in the same
+array, so it ignores the fact that children may be contained in subfolders,
+but each instance keeps a <code>path</code> property. The upshot here is that the
+destination structure will always be flat. This approach deals with a lot
+of weirdness in scene release structures.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getChildren</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">folder</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="k">new</span> <span class="nx">Walker</span><span class="p">(</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
+    <span class="p">{</span>
+      <span class="nx">on</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">file</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">child</span><span class="p">,</span> <span class="nx">stat</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">file</span><span class="p">;</span>
+          <span class="nx">file</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">File</span><span class="p">({</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">child</span><span class="p">),</span>
+            <span class="nx">stat</span><span class="o">:</span> <span class="nx">stat</span><span class="p">,</span>
+            <span class="nx">parent</span><span class="o">:</span> <span class="nx">folder</span>
+          <span class="p">});</span>
+          <span class="nx">folder</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">file</span><span class="p">);</span>
+          <span class="nx">next</span><span class="p">();</span>
+        <span class="p">},</span>
+        <span class="nx">directory</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">child</span><span class="p">,</span> <span class="nx">stat</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">directory</span><span class="p">;</span>
+          <span class="nx">directory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Directory</span><span class="p">({</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">child</span><span class="p">),</span>
+            <span class="nx">stat</span><span class="o">:</span> <span class="nx">stat</span><span class="p">,</span>
+            <span class="nx">parent</span><span class="o">:</span> <span class="nx">folder</span>
+          <span class="p">});</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>No need to call getChildren here because this walker will recurse.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+          <span class="nx">folder</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">directory</span><span class="p">);</span>
+          <span class="nx">next</span><span class="p">();</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="nx">callback</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">callback</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">findWhere</span><span class="p">(</span><span class="nx">folder</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="p">{</span><span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;media&#39;</span><span class="p">}))</span> <span class="p">{</span>
+          <span class="k">new</span> <span class="nx">Contravention</span><span class="p">(</span><span class="nx">folder</span><span class="p">,</span> <span class="s1">&#39;noMedia&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">callback</span><span class="p">();</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">);</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="directory.prototype.mvtotemp">
+  <h2>
+    <a href="#directory.prototype.mvtotemp" name="directory.prototype.mvtotemp" class="pilcrow">&#182;</a>
+    Directory.prototype.mvToTemp
+  </h2>
+</div>
+
+
+<p>basically just append <code>.temp</code> to the existing path. When a directory is being
+processed with the <code>inPlace</code> option there's obviously a chance that the
+target directory path will be the same as the source, but concierge doesn't
+actually delete files which aren't required, it just doesn't copy them to
+the destination. Hence the need to move source directory's to a <code>.temp</code>
+directory prior to processing.</p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">mvToTemp</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">directory</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">target</span><span class="p">;</span>
+  <span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.temp&#39;</span> <span class="o">+</span> <span class="nx">path</span><span class="p">.</span><span class="nx">sep</span><span class="p">;</span>
+  <span class="nx">fs</span><span class="p">.</span><span class="nx">mv</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="nx">target</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">directory</span><span class="p">.</span><span class="nx">setPath</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">dry</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">child</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">child</span><span class="p">.</span><span class="nx">setParent</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+    <span class="nx">callback</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="directory.prototype.mvtooutput">
+  <h2>
+    <a href="#directory.prototype.mvtooutput" name="directory.prototype.mvtooutput" class="pilcrow">&#182;</a>
+    Directory.prototype.mvToOutput
+  </h2>
+</div>
+
+
+<p>this doesn't actually move child files, nor does it purge the this.children,
+it simply reassigns this.path to the output directory, and deletes the old
+directory</p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">mvToOutput</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">directory</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">target</span><span class="p">;</span>
+  <span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getOutputPath</span><span class="p">();</span>
+
+  <span class="nx">fs</span><span class="p">.</span><span class="nx">rmdir</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">directory</span><span class="p">.</span><span class="nx">setPath</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+    <span class="nx">callback</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="directory.prototype.createoutputpath">
+  <h2>
+    <a href="#directory.prototype.createoutputpath" name="directory.prototype.createoutputpath" class="pilcrow">&#182;</a>
+    Directory.prototype.createOutputPath
+  </h2>
+</div>
+
+
+<p>basically mkdirp</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">createOutputPath</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fs</span><span class="p">.</span><span class="nx">mkdirpSync</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getOutputPath</span><span class="p">());</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="directory.prototype.getcanonicalbasename">
+  <h2>
+    <a href="#directory.prototype.getcanonicalbasename" name="directory.prototype.getcanonicalbasename" class="pilcrow">&#182;</a>
+    Directory.prototype.getCanonicalBasename
+  </h2>
+</div>
+
+
+<p>canonical as in 'according to convention', so wer'e going to apply the user
+defined format to the movie name to generate a canonical name</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCanonicalBasename</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">canonicalBasename</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">canonicalBasename</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">canonicalBasename</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">canonicalBasename</span> <span class="o">=</span> <span class="nx">format</span><span class="p">(</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;directoryFormat&#39;</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">meta</span><span class="p">);</span>
+  <span class="nx">canonicalBasename</span> <span class="o">=</span> <span class="nx">s</span><span class="p">(</span><span class="nx">canonicalBasename</span><span class="p">).</span><span class="nx">stripPunctuation</span><span class="p">().</span><span class="nx">s</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">canonicalBasename</span> <span class="o">=</span> <span class="nx">canonicalBasename</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">canonicalBasename</span><span class="p">;</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="directory.prototype.getoutputpath">
+  <h2>
+    <a href="#directory.prototype.getoutputpath" name="directory.prototype.getoutputpath" class="pilcrow">&#182;</a>
+    Directory.prototype.getOutputPath
+  </h2>
+</div>
+
+
+<p>attaches the appropriate target parent folder to the canonical basename</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOutputPath</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">outputPath</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">outputPath</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">outputPath</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">output</span> <span class="o">==</span> <span class="s1">&#39;inPlace&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">outputPath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">dirname</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCanonicalBasename</span><span class="p">());</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">outputPath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">output</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCanonicalBasename</span><span class="p">());</span>
+  <span class="p">}</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">outputPath</span> <span class="o">=</span> <span class="nx">outputPath</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">outputPath</span><span class="p">;</span>
+
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="directory.prototype.haserror">
+  <h2>
+    <a href="#directory.prototype.haserror" name="directory.prototype.haserror" class="pilcrow">&#182;</a>
+    Directory.prototype.hasError
+  </h2>
+</div>
+
+
+<p>A convenience method to save rewriting these conditionals.. used by plugins
+quite a lot.</p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">name</span>
+      <span class="dox_type">string</span>
+      <span>The error name, see Contravention object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasError</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+    <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">.</span><span class="nx">name</span> <span class="o">==</span> <span class="nx">name</span><span class="p">)</span>
+  <span class="p">);</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="directory.prototype.setparent">
+  <h2>
+    <a href="#directory.prototype.setparent" name="directory.prototype.setparent" class="pilcrow">&#182;</a>
+    Directory.prototype.setParent
+  </h2>
+</div>
+
+
+<p>convenience method which basically wraps <code>setPath</code></p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">parentPath</span>
+      <span class="dox_type">string</span>
+      <span>Path to parent directory</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">Directory</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setParent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parentPath</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| setParent&#39;</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">setPath</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">parentPath</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">basename</span><span class="p">));</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="file%20class">
+  <h2>
+    <a href="#file%20class" name="file%20class" class="pilcrow">&#182;</a>
+    File Class
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>the file class contains:</p>
+
+<ul>
+<li>properties describing the file (path et cetera)
+<ul><li>methods relating to this file as it exists on the hard drive</li></ul></li>
+</ul>
+
+<p>instantiate with the same params as Item Class</p>
+
+<p>As with the directory class, methods &amp; properties stored on this class
+should be limited to the above to avoid creating a god class.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">File</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">Item</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nx">File</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">Item</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+<span class="nx">File</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">File</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="file.prototype.setpath">
+  <h2>
+    <a href="#file.prototype.setpath" name="file.prototype.setpath" class="pilcrow">&#182;</a>
+    File.prototype.setPath
+  </h2>
+</div>
+
+
+<p>set <code>path</code> property and break it into other properties like:</p>
+  </div>
+  <div class="body"><ul>
+<li>extname
+<ul><li>filename</li>
+<li>basename</li>
+<li>dirname</li></ul></li>
+</ul>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">filePath</span>
+      <span class="dox_type">string</span>
+      <span>the file path (absolute or relative)</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">File</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setPath</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">filePath</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">filePath</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">extname</span> <span class="o">=</span>  <span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">filePath</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">filename</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">basename</span><span class="p">(</span><span class="nx">filePath</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">basename</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">basename</span><span class="p">(</span><span class="nx">filePath</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">extname</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">extname</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">extname</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">dirname</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">dirname</span><span class="p">(</span><span class="nx">filePath</span><span class="p">);</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="file.prototype.setparent">
+  <h2>
+    <a href="#file.prototype.setparent" name="file.prototype.setparent" class="pilcrow">&#182;</a>
+    File.prototype.setParent
+  </h2>
+</div>
+
+
+<p>convenience method which basically wraps <code>setPath</code></p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">parentPath</span>
+      <span class="dox_type">string</span>
+      <span>Path to parent directory</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">File</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setParent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parentPath</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| setParent&#39;</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">setPath</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">parentPath</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">filename</span><span class="p">));</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="file.prototype.getcanonicalfilename">
+  <h2>
+    <a href="#file.prototype.getcanonicalfilename" name="file.prototype.getcanonicalfilename" class="pilcrow">&#182;</a>
+    File.prototype.getCanonicalFilename
+  </h2>
+</div>
+
+
+<p>generates file name according to format defined in options.</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">File</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCanonicalFilename</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">canonicalName</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">basename</span><span class="p">;</span>
+  <span class="nx">basename</span> <span class="o">=</span> <span class="nx">format</span><span class="p">(</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;fileFormat&#39;</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">meta</span><span class="p">);</span>
+  <span class="nx">basename</span> <span class="o">=</span> <span class="nx">s</span><span class="p">(</span><span class="nx">basename</span><span class="p">).</span><span class="nx">stripPunctuation</span><span class="p">().</span><span class="nx">s</span><span class="p">;</span>
+  <span class="nx">canonicalName</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nx">basename</span><span class="p">,</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">suffix</span><span class="p">,</span>
+    <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">extname</span>
+  <span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">canonicalName</span><span class="p">;</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="file.prototype.getoutputpath">
+  <h2>
+    <a href="#file.prototype.getoutputpath" name="file.prototype.getoutputpath" class="pilcrow">&#182;</a>
+    File.prototype.getOutputPath
+  </h2>
+</div>
+
+
+<p>simple wrapper to attach canonical to destination path</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">File</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getOutputPath</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">getOutputPath</span><span class="p">(),</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">getCanonicalFilename</span><span class="p">()</span>
+  <span class="p">);</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="file.prototype.mvtooutput">
+  <h2>
+    <a href="#file.prototype.mvtooutput" name="file.prototype.mvtooutput" class="pilcrow">&#182;</a>
+    File.prototype.mvToOutput
+  </h2>
+</div>
+
+
+<p>moves file on hard drive</p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">File</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">mvToOutput</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">file</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">output</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getOutputPath</span><span class="p">();</span>
+  <span class="nx">fs</span><span class="p">.</span><span class="nx">mv</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="nx">output</span><span class="p">,</span> <span class="p">{</span><span class="nx">mkdirp</span><span class="o">:</span> <span class="kc">true</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">file</span><span class="p">.</span><span class="nx">setPath</span><span class="p">(</span><span class="nx">output</span><span class="p">);</span>
+    <span class="nx">callback</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="module.exports">
+  <h2>
+    <a href="#module.exports" name="module.exports" class="pilcrow">&#182;</a>
+    module.exports
+  </h2>
+</div>
+
+
+<p>just the <code>Directory</code> and <code>File</code> classes</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">Directory</span><span class="o">:</span> <span class="nx">Directory</span><span class="p">,</span>
+  <span class="nx">File</span><span class="o">:</span> <span class="nx">File</span>
+<span class="p">}</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

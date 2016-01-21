@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>metaMedia.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/metaMedia.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#config">config</a>
+      </div>
+      <div class="heading h2">
+        <a href="#validate">validate</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>metaMedia.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;underscore&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./fs.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">async</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">avprobe</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;avprobemeta&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">getConductor</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./getConductor&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Contravention</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./Contravention&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log.js&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">getMetaFromMedia</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">validate</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">isMedia</span><span class="p">;</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="config">
+  <h2>
+    <a href="#config" name="config" class="pilcrow">&#182;</a>
+    config
+  </h2>
+</div>
+
+
+<p>module uses ignoreCache which is defined in <code>./config.js</code> because it's
+used in other modules also.
+no config required for this module</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="validate">
+  <h2>
+    <a href="#validate" name="validate" class="pilcrow">&#182;</a>
+    validate
+  </h2>
+</div>
+
+
+<p>check whether or not we can retrieve meta for this directory</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">validate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">hasError</span><span class="p">())</span> <span class="p">{</span>
+    <span class="nx">callback</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span>
+    <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">ignoreCache</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+    <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">mediaCache</span><span class="p">)</span>
+  <span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| using media cache, no refresh&#39;</span><span class="p">);</span>
+    <span class="nx">callback</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span> <span class="c1">// Break series in conductor</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">callback</span><span class="p">();</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>========================================================= getMetaFromMedia ==</p>
+  </div>
+  <div class="body"><p>avprobe largest media file</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">getMetaFromMedia</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">selection</span><span class="p">;</span>
+
+  <span class="nx">selection</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span>
+      <span class="p">[</span> <span class="s1">&#39;mkv&#39;</span><span class="p">,</span> <span class="s1">&#39;avi&#39;</span><span class="p">,</span> <span class="s1">&#39;mp4&#39;</span> <span class="p">],</span>
+      <span class="nx">file</span><span class="p">.</span><span class="nx">extname</span>
+    <span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">largest</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">selection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">file</span><span class="p">.</span><span class="nx">stat</span><span class="p">.</span><span class="nx">size</span><span class="p">;</span>
+  <span class="p">});</span>
+  <span class="nx">avprobe</span><span class="p">(</span>
+    <span class="nx">largest</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">selected</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">mediaCache</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nx">audioCodec</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="nx">formatName</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">format</span><span class="p">.</span><span class="nx">format_name</span><span class="p">,</span>
+        <span class="nx">formatLongName</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">format</span><span class="p">.</span><span class="nx">format_long_name</span><span class="p">,</span>
+        <span class="nx">duration</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">format</span><span class="p">.</span><span class="nx">duration</span> <span class="o">/</span> <span class="mi">60</span><span class="p">),</span>
+        <span class="nx">bitRate</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">format</span><span class="p">.</span><span class="nx">bit_rate</span>
+      <span class="p">};</span>
+
+      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">format</span><span class="p">.</span><span class="nx">streams</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stream</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stream</span><span class="p">.</span><span class="nx">codec_type</span> <span class="o">==</span> <span class="s1">&#39;video&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span>
+            <span class="nx">selected</span><span class="p">,</span>
+            <span class="p">{</span>
+              <span class="nx">videoCodec</span><span class="o">:</span> <span class="nx">stream</span><span class="p">.</span><span class="nx">codec_name</span><span class="p">,</span>
+              <span class="nx">videoLongCodec</span><span class="o">:</span> <span class="nx">stream</span><span class="p">.</span><span class="nx">codec_long_name</span><span class="p">,</span>
+              <span class="nx">videoWidth</span><span class="o">:</span> <span class="nx">stream</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span>
+              <span class="nx">videoHeight</span><span class="o">:</span> <span class="nx">stream</span><span class="p">.</span><span class="nx">height</span>
+            <span class="p">}</span>
+          <span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">stream</span><span class="p">.</span><span class="nx">codec_type</span> <span class="o">==</span> <span class="s1">&#39;audio&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">selected</span><span class="p">.</span><span class="nx">audioCodec</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nx">selected</span><span class="p">.</span><span class="nx">audioCodec</span><span class="p">,</span>
+            <span class="s1">&#39;|&#39;</span><span class="p">,</span>
+            <span class="nx">stream</span><span class="p">.</span><span class="nx">codec_name</span>
+          <span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">,</span> <span class="nx">selected</span><span class="p">);</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| got media meta from avprobe&#39;</span><span class="p">);</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">selected</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;  &#39;</span><span class="p">));</span>
+      <span class="nx">callback</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">getConductor</span><span class="p">([</span>
+  <span class="nx">validate</span><span class="p">,</span>
+  <span class="nx">getMetaFromMedia</span>
+<span class="p">]);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

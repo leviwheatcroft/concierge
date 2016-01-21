@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>bootstrap.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/bootstrap.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#config">config</a>
+      </div>
+      <div class="heading h2">
+        <a href="#bootstrap">bootstrap</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>bootstrap.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+<p>require the things</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">path</span>                <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">async</span>               <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">_</span>                   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./underscore.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">fsItems</span>             <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./fsItems.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">log</span>                 <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Walker</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./walkDepth.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">plugins</span>             <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./plugins.js&#39;</span><span class="p">);</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>declaration</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">bootstrap</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="config">
+  <h2>
+    <a href="#config" name="config" class="pilcrow">&#182;</a>
+    config
+  </h2>
+</div>
+
+
+<p>define options specific to this module</p>
+  </div>
+  <div class="body"><ul>
+<li>parent - if specified, all direct children will be processed</li>
+<li>target - if specified, only that directory will be processed, parent will
+be ignored.</li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">config</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+  <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">parent</span><span class="o">:</span> <span class="p">[</span>
+      <span class="s1">&#39;p&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;parent directory (will process children)&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;file&#39;</span>
+    <span class="p">],</span>
+    <span class="nx">target</span><span class="o">:</span> <span class="p">[</span>
+      <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;target directory (overrides parent)&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;file&#39;</span>
+    <span class="p">]</span>
+  <span class="p">},</span>
+  <span class="nx">defaults</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">parent</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nx">target</span><span class="o">:</span> <span class="kc">false</span>
+  <span class="p">},</span>
+  <span class="nx">validation</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">parent</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">throwError</span><span class="p">(</span><span class="s1">&#39;specify at least one of --parent or --target&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="bootstrap">
+  <h2>
+    <a href="#bootstrap" name="bootstrap" class="pilcrow">&#182;</a>
+    bootstrap
+  </h2>
+</div>
+
+
+<p>this is where we gather the directories and their children according to the
+specified target or parent</p>
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">directories</span>
+      <span class="dox_type">Directory[]</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">bootstrap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directories</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">directory</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>load plugins</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">plugins</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>load config and process CLI</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">config</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s1">&#39;initialized config&#39;</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p><code>config.target</code> means we're processing a single directory</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">directory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">fsItems</span><span class="p">.</span><span class="nx">Directory</span><span class="p">({</span>
+      <span class="nx">path</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">target</span>
+    <span class="p">});</span>
+    <span class="nx">directories</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">directory</span><span class="p">);</span>
+    <span class="nx">directory</span><span class="p">.</span><span class="nx">getChildren</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| got files&#39;</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p><code>config.target</code> means we're processing children</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">new</span> <span class="nx">Walker</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">parent</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">maxDepth</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="nx">on</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">directory</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">child</span><span class="p">,</span> <span class="nx">stat</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">directory</span><span class="p">;</span>
+          <span class="nx">directory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">fsItems</span><span class="p">.</span><span class="nx">Directory</span><span class="p">({</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">child</span><span class="p">),</span>
+            <span class="nx">stat</span><span class="o">:</span> <span class="nx">stat</span>
+          <span class="p">});</span>
+          <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| got files&#39;</span><span class="p">);</span>
+          <span class="nx">directories</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">directory</span><span class="p">);</span>
+          <span class="nx">directory</span><span class="p">.</span><span class="nx">getChildren</span><span class="p">(</span><span class="nx">next</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="nx">callback</span><span class="o">:</span> <span class="nx">callback</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">bootstrap</span><span class="p">;</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>log.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/log.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#log%20module">log module</a>
+      </div>
+      <div class="heading h2">
+        <a href="#config">config</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="log%20module">
+  <h2>
+    <a href="#log%20module" name="log%20module" class="pilcrow">&#182;</a>
+    log module
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>this is actually a pretty good example of how to use the <code>config</code> module
+winston is returned by <code>module.exports</code> in it's uninitiated state, then
+the init function passed to config.push is what actually initialises the
+winston instance</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">winston</span>             <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;winston&#39;</span><span class="p">);</span>
+
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="config">
+  <h2>
+    <a href="#config" name="config" class="pilcrow">&#182;</a>
+    config
+  </h2>
+</div>
+
+
+<p>define options specific to this module</p>
+  </div>
+  <div class="body"><ul>
+<li>concurrentOperations - async concurrency</li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">config</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+  <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">logFile</span><span class="o">:</span> <span class="p">[</span>
+      <span class="s1">&#39;l&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;file to write logs to&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;file&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;concierge.log&#39;</span>
+    <span class="p">],</span>
+    <span class="nx">logLevel</span><span class="o">:</span> <span class="p">[</span>
+      <span class="kc">false</span><span class="p">,</span>
+      <span class="s1">&#39;log level (silly|debug|info|warn|error)&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;info&#39;</span>
+    <span class="p">]</span>
+  <span class="p">},</span>
+  <span class="nx">validation</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="sr">/^(silly|debug|info|warn|error)$/i</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">logLevel</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;logLevel invalid: &#39;</span> <span class="o">+</span> <span class="nx">config</span><span class="p">.</span><span class="nx">logLevel</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">logFile</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">winston</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">winston</span><span class="p">.</span><span class="nx">transports</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="p">{</span> <span class="nx">filename</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">logFile</span> <span class="p">});</span>
+    <span class="p">}</span>
+    <span class="nx">winston</span><span class="p">.</span><span class="nx">level</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">logLevel</span><span class="p">;</span>
+    <span class="nx">winston</span><span class="p">.</span><span class="nx">throwError</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">winston</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+      <span class="k">throw</span> <span class="nx">msg</span><span class="p">;</span>
+    <span class="p">};</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">winston</span><span class="p">;</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

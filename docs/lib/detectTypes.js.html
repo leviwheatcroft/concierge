@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>detectTypes.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/detectTypes.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#detecttypes%20module">detectTypes module</a>
+      </div>
+      <div class="heading h2">
+        <a href="#require">require</a>
+      </div>
+      <div class="heading h2">
+        <a href="#declarations">declarations</a>
+      </div>
+      <div class="heading h2">
+        <a href="#typesuffixes">typeSuffixes</a>
+      </div>
+      <div class="heading h2">
+        <a href="#config">config</a>
+      </div>
+      <div class="heading h2">
+        <a href="#validate">validate</a>
+      </div>
+      <div class="heading h2">
+        <a href="#attachsubtitles">attachSubtitles</a>
+      </div>
+      <div class="heading h2">
+        <a href="#identifymediatypes">identifyMediaTypes</a>
+      </div>
+      <div class="heading h2">
+        <a href="#identifyfeature">identifyFeature</a>
+      </div>
+      <div class="heading h2">
+        <a href="#assignsuffix">assignSuffix</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="detecttypes%20module">
+  <h2>
+    <a href="#detecttypes%20module" name="detecttypes%20module" class="pilcrow">&#182;</a>
+    detectTypes module
+  </h2>
+</div>
+
+
+<p>this is designed to run through a directory's children and determine what
+each file is for.</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="require">
+  <h2>
+    <a href="#require" name="require" class="pilcrow">&#182;</a>
+    require
+  </h2>
+</div>
+
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">_</span>                   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;underscore&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">path</span>                <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">async</span>               <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">jsdiff</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;diff&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">log</span>                 <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">getConductor</span>        <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./getConductor&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">fs</span>                  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./fs&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Contravention</span>       <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./Contravention&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="declarations">
+  <h2>
+    <a href="#declarations" name="declarations" class="pilcrow">&#182;</a>
+    declarations
+  </h2>
+</div>
+
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">attachSubtitles</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">identifyMediaTypes</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">identifyFeature</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">assignSuffixes</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">typeSuffixes</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">validate</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="typesuffixes">
+  <h2>
+    <a href="#typesuffixes" name="typesuffixes" class="pilcrow">&#182;</a>
+    typeSuffixes
+  </h2>
+</div>
+
+
+<p>these are the strings which are placed in filenames for different types</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">typeSuffixes</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">trailer</span><span class="o">:</span> <span class="s1">&#39; Trailer&#39;</span><span class="p">,</span>
+  <span class="mi">1</span><span class="o">:</span> <span class="s1">&#39; - Disk 1&#39;</span><span class="p">,</span>
+  <span class="mi">2</span><span class="o">:</span> <span class="s1">&#39; - Disk 2&#39;</span><span class="p">,</span>
+  <span class="mi">3</span><span class="o">:</span> <span class="s1">&#39; - Disk 3&#39;</span>
+<span class="p">};</span>
+
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="config">
+  <h2>
+    <a href="#config" name="config" class="pilcrow">&#182;</a>
+    config
+  </h2>
+</div>
+
+
+<p>no config required for this module</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="validate">
+  <h2>
+    <a href="#validate" name="validate" class="pilcrow">&#182;</a>
+    validate
+  </h2>
+</div>
+
+
+<p>check whether or not we can retrieve meta for this directory</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">validate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">hasError</span><span class="p">())</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span>
+      <span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span>
+      <span class="s1">&#39;| detectTypes skip: &#39;</span><span class="p">,</span>
+      <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span>
+    <span class="p">);</span>
+    <span class="nx">callback</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">callback</span><span class="p">();</span>
+<span class="p">};</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="attachsubtitles">
+  <h2>
+    <a href="#attachsubtitles" name="attachsubtitles" class="pilcrow">&#182;</a>
+    attachSubtitles
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>find any subtitle files with the same name as media, so they can be renamed
+together</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">directory</span>
+      <span class="dox_type">Directory</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">attachSubtitles</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">mediaFiles</span><span class="p">;</span>
+  <span class="nx">mediaFiles</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">where</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="p">{</span><span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;media&#39;</span><span class="p">});</span>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">mediaFiles</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mediaFile</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">subFile</span><span class="p">;</span>
+    <span class="nx">subFile</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">where</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;subtitle&#39;</span><span class="p">,</span>
+      <span class="nx">basename</span><span class="o">:</span> <span class="nx">mediaFile</span><span class="p">.</span><span class="nx">basename</span>
+    <span class="p">});</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">subFile</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="nx">mediaFile</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| no subs detected&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="nx">mediaFile</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| got subtitles&#39;</span><span class="p">);</span>
+      <span class="nx">mediaFile</span><span class="p">.</span><span class="nx">subFile</span> <span class="o">=</span> <span class="nx">subFile</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+  <span class="nx">callback</span><span class="p">();</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="identifymediatypes">
+  <h2>
+    <a href="#identifymediatypes" name="identifymediatypes" class="pilcrow">&#182;</a>
+    identifyMediaTypes
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>this is where we identify trailers
+basically find largest file size, any media files which are less than half
+that must be either a trailer or sample. Everything else will be a feature.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">directory</span>
+      <span class="dox_type">Directory</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">identifyMediaTypes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">largestMedia</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">selection</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>Identify types of media file.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+  <span class="nx">selection</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">where</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="p">{</span><span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;media&#39;</span><span class="p">});</span>
+
+  <span class="nx">largestMedia</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">selection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">file</span><span class="p">.</span><span class="nx">stat</span><span class="p">.</span><span class="nx">size</span><span class="p">;</span>
+  <span class="p">}).</span><span class="nx">stat</span><span class="p">.</span><span class="nx">size</span><span class="p">;</span>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">selection</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span>
+      <span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">stat</span><span class="p">.</span><span class="nx">size</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nx">largestMedia</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span> <span class="o">&amp;&amp;</span>
+      <span class="p">(</span><span class="sr">/trailer/i</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">basename</span><span class="p">))</span>
+    <span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>Small &amp; contains "trailer" - is trailer</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+      <span class="nx">file</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;trailer&#39;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">stat</span><span class="p">.</span><span class="nx">size</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nx">largestMedia</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Small, not trailer - is sample or something</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+      <span class="nx">file</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;junk&#39;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>Large - probably movie</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+      <span class="nx">file</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;feature&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| media type: &#39;</span><span class="p">,</span> <span class="nx">file</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">callback</span><span class="p">();</span>
+<span class="p">};</span>
+
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="identifyfeature">
+  <h2>
+    <a href="#identifyfeature" name="identifyfeature" class="pilcrow">&#182;</a>
+    identifyFeature
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>this is where we identify multi disk releases, et cetera
+basically diff the filenames and look for numbers in the diffs</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">directory</span>
+      <span class="dox_type">Directory</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">identifyFeature</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">volumes</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">volumeOne</span><span class="p">;</span>
+  <span class="nx">volumes</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">where</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="p">{</span><span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;feature&#39;</span><span class="p">});</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>If there's only one feature then there's nothing more to see here.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">volumes</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">callback</span><span class="p">();</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| found &#39;</span><span class="p">,</span> <span class="nx">volumes</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="s1">&#39; feature file(s)&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>Grab the first feature file - we're going to compare it to the others</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">volumeOne</span> <span class="o">=</span> <span class="nx">volumes</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">volumes</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">volume</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">diffs</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">added</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">removed</span><span class="p">;</span>
+    <span class="nx">diffs</span> <span class="o">=</span> <span class="nx">jsdiff</span><span class="p">.</span><span class="nx">diffChars</span><span class="p">(</span><span class="nx">volumeOne</span><span class="p">.</span><span class="nx">basename</span><span class="p">,</span> <span class="nx">volume</span><span class="p">.</span><span class="nx">basename</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>The part of filename which doesn't match volumeOne</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">added</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">findWhere</span><span class="p">(</span><span class="nx">diffs</span><span class="p">,</span> <span class="p">{</span> <span class="nx">added</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+    <span class="nx">added</span> <span class="o">=</span> <span class="sr">/[0-9]*/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">added</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span>
+      <span class="nx">added</span> <span class="o">&amp;&amp;</span>
+      <span class="nb">parseInt</span><span class="p">(</span><span class="nx">added</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">3</span>
+    <span class="p">)</span> <span class="p">{</span>
+      <span class="nx">volume</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">added</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">volume</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| found vol: &#39;</span><span class="p">,</span> <span class="nx">volume</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>The part of volumeOne which doesn't match this filename</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">removed</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">findWhere</span><span class="p">(</span><span class="nx">diffs</span><span class="p">,{</span> <span class="nx">removed</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+    <span class="nx">removed</span> <span class="o">=</span> <span class="sr">/[0-9]*/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">removed</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span>
+      <span class="nx">volumeOne</span><span class="p">.</span><span class="nx">type</span> <span class="o">==</span> <span class="s1">&#39;feature&#39;</span> <span class="o">&amp;&amp;</span>
+      <span class="nx">removed</span> <span class="o">&amp;&amp;</span>
+      <span class="nb">parseInt</span><span class="p">(</span><span class="nx">removed</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="p">)</span> <span class="p">{</span>
+      <span class="nx">volumeOne</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">removed</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">volumeOne</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| found vol: &#39;</span><span class="p">,</span> <span class="nx">volumeOne</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>At this point if theres anything which still has type 'feature' then we
+couldn't find a volume number for it. We need human intervention.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">findWhere</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="p">{</span><span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;feature&#39;</span><span class="p">}))</span> <span class="p">{</span>
+    <span class="nx">callback</span><span class="p">(</span><span class="k">new</span> <span class="nx">Contravention</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="s1">&#39;volNum&#39;</span><span class="p">));</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">callback</span><span class="p">();</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="assignsuffix">
+  <h2>
+    <a href="#assignsuffix" name="assignsuffix" class="pilcrow">&#182;</a>
+    assignSuffix
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>assign suffix for filenames</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">directory</span>
+      <span class="dox_type">Directory</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback
+</span>
+      <span class="dox_type">function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">assignSuffixes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">typeSuffixes</span><span class="p">[</span><span class="nx">file</span><span class="p">.</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
+      <span class="nx">file</span><span class="p">.</span><span class="nx">suffix</span> <span class="o">=</span> <span class="nx">typeSuffixes</span><span class="p">[</span><span class="nx">file</span><span class="p">.</span><span class="nx">type</span><span class="p">];</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">subFile</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">file</span><span class="p">.</span><span class="nx">subFile</span><span class="p">.</span><span class="nx">suffix</span> <span class="o">=</span> <span class="nx">typeSuffixes</span><span class="p">[</span><span class="nx">file</span><span class="p">.</span><span class="nx">type</span><span class="p">];</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+  <span class="nx">callback</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">getConductor</span><span class="p">([</span>
+  <span class="nx">validate</span><span class="p">,</span>
+  <span class="nx">attachSubtitles</span><span class="p">,</span>
+  <span class="nx">identifyMediaTypes</span><span class="p">,</span>
+  <span class="nx">identifyFeature</span><span class="p">,</span>
+  <span class="nx">assignSuffixes</span>
+<span class="p">]);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>
