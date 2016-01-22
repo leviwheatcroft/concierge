@@ -158,11 +158,23 @@ callback(new Contravention(directory, 'noMedia', 'optional custom message');</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 <span class="nx">Contravention</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directory</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">match</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">defaultMessages</span><span class="p">),</span> <span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">match</span> <span class="o">=</span> <span class="sr">/\[(\w.*?)\]/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span>
+      <span class="p">(</span><span class="o">!</span><span class="nx">match</span><span class="p">)</span> <span class="o">||</span>
+      <span class="p">(</span><span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">defaultMessages</span><span class="p">),</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="p">)</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;bad contravention name: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">));</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">name</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">message</span> <span class="o">||</span> <span class="nx">defaultMessages</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">stack</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">()).</span><span class="nx">stack</span><span class="p">;</span>
   <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-  <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| contravention: &#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+  <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| contravention: &#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="nx">Contravention</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nb">Error</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
 <span class="nx">Contravention</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Contravention</span><span class="p">;</span>

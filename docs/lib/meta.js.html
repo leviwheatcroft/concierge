@@ -80,6 +80,7 @@
 <span class="kd">var</span> <span class="nx">fs</span>                  <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./fs&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">log</span>                 <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./log&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Contravention</span>       <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./Contravention&#39;</span><span class="p">);</span>
 
 <span class="kd">var</span> <span class="nx">store</span><span class="p">;</span>
 <span class="kd">var</span> <span class="nx">retrieve</span><span class="p">;</span>
@@ -245,8 +246,29 @@ convertible to a string, or that it has a <code>toJSON</code> method</p>
         <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">,</span>
         <span class="nx">data</span>
       <span class="p">);</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">log</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">logName</span><span class="p">,</span> <span class="s1">&#39;| &#39;</span><span class="p">,</span> <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>a contravention which is a string will have come from the .meta file
+this means contraventions which are already set will not be set
+initialized again</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+      <span class="k">if</span> <span class="p">(</span>
+        <span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+        <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span><span class="p">))</span>
+      <span class="p">)</span> <span class="p">{</span>
+        <span class="k">new</span> <span class="nx">Contravention</span><span class="p">(</span>
+          <span class="nx">directory</span><span class="p">,</span>
+          <span class="nx">directory</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">contravention</span>
+        <span class="p">);</span>
       <span class="p">}</span>
       <span class="nx">callback</span><span class="p">();</span>
     <span class="p">}</span>

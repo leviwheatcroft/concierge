@@ -51,6 +51,8 @@ winston instance</p>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">winston</span>             <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;winston&#39;</span><span class="p">);</span>
 
+<span class="kd">var</span> <span class="nx">logger</span> <span class="o">=</span> <span class="k">new</span> <span class="p">(</span><span class="nx">winston</span><span class="p">.</span><span class="nx">Logger</span><span class="p">);</span>
+
 
 
 
@@ -98,18 +100,24 @@ winston instance</p>
     <span class="p">}</span>
   <span class="p">},</span>
   <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">logFile</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">winston</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">winston</span><span class="p">.</span><span class="nx">transports</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="p">{</span> <span class="nx">filename</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">logFile</span> <span class="p">});</span>
-    <span class="p">}</span>
-    <span class="nx">winston</span><span class="p">.</span><span class="nx">level</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">logLevel</span><span class="p">;</span>
-    <span class="nx">winston</span><span class="p">.</span><span class="nx">throwError</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">winston</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+    <span class="nx">logger</span><span class="p">.</span><span class="nx">configure</span><span class="p">({</span>
+      <span class="nx">level</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">logLevel</span><span class="p">,</span>
+      <span class="nx">handleExceptions</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">transports</span><span class="o">:</span> <span class="p">[</span>
+        <span class="k">new</span> <span class="p">(</span><span class="nx">winston</span><span class="p">.</span><span class="nx">transports</span><span class="p">.</span><span class="nx">Console</span><span class="p">)(),</span>
+        <span class="k">new</span> <span class="p">(</span><span class="nx">winston</span><span class="p">.</span><span class="nx">transports</span><span class="p">.</span><span class="nx">File</span><span class="p">)({</span> <span class="nx">filename</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">logFile</span> <span class="p">})</span>
+      <span class="p">],</span>
+      <span class="nx">colorize</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">});</span>
+    <span class="nx">logger</span><span class="p">.</span><span class="nx">throwError</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
       <span class="k">throw</span> <span class="nx">msg</span><span class="p">;</span>
     <span class="p">};</span>
+
   <span class="p">}</span>
 <span class="p">});</span>
 
-<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">winston</span><span class="p">;</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">logger</span><span class="p">;</span>
 </pre></div>
         </td>
       </tr>

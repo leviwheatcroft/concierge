@@ -215,6 +215,7 @@ handle fancy cli stuff. Also attach options defined in other modules using
   <span class="nx">push</span><span class="p">(</span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./configShared&#39;</span><span class="p">));</span>
   <span class="nx">cli</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
 
+
   <span class="k">return</span> <span class="nx">cli</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -328,9 +329,15 @@ command.option(
   <div class="body"><p>defaults doesn't work how it might appear, it's not really defaults or extend
 or whatever.</p>
 
-<p>note: <code>_.compactObject</code> method may introduce problems, falsy values are
-not passed to <code>config</code> object. <code>cli</code> module allows you to set defaults,
-if a default is falsy, it will not end up on <code>config</code> it will be <code>undefined</code></p>
+<p><code>cli</code> module doesn't really allow you to have a config file. you want
+precedence to run like:</p>
+
+<p>command line > ini file > defaults</p>
+
+<p>the only way I could find to do this was to collect options in <code>options</code> var,
+then strip the defaults defined therein. Then if you run <code>cli.parse</code>,
+options with no default will be unset. then you can just <code>_.extend</code>
+everything into a single <code>config</code> object.</p>
   </div>
 </div>
         </td>
@@ -338,9 +345,8 @@ if a default is falsy, it will not end up on <code>config</code> it will be <cod
 <span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">cliOptions</span><span class="p">;</span>
   <span class="kd">var</span> <span class="nx">iniOptions</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">defaults</span> <span class="o">=</span> <span class="p">{};</span>
 
-  <span class="nx">cliOptions</span> <span class="o">=</span> <span class="nx">getCommandLine</span><span class="p">();</span>
-  <span class="nx">iniOptions</span> <span class="o">=</span> <span class="nx">getIni</span><span class="p">(</span><span class="nx">cliOptions</span><span class="p">.</span><span class="nx">configFile</span><span class="p">);</span>
 
 </pre></div>
         </td>
@@ -350,10 +356,57 @@ if a default is falsy, it will not end up on <code>config</code> it will be <cod
 <div class="pilwrap">
   <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
 </div>
-<p>cli options overwrite iniFile, which overwrite defaults</p>
+<p>remove the defaults from options to be passed to cli</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="nx">iniOptions</span><span class="p">,</span> <span class="nx">_</span><span class="p">.</span><span class="nx">compactObject</span><span class="p">(</span><span class="nx">cliOptions</span><span class="p">));</span>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">defaults</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>get options from cli, purge null values</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">cliOptions</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">compactObject</span><span class="p">(</span><span class="nx">getCommandLine</span><span class="p">());</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>get options from ini</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">iniOptions</span> <span class="o">=</span> <span class="nx">getIni</span><span class="p">(</span><span class="nx">cliOptions</span><span class="p">.</span><span class="nx">configFile</span> <span class="o">||</span> <span class="s1">&#39;config.ini&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>amalgamate, right most has precedence</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="nx">defaults</span><span class="p">,</span> <span class="nx">iniOptions</span><span class="p">,</span> <span class="nx">cliOptions</span><span class="p">);</span>
 
   <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">validationFns</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">fn</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
