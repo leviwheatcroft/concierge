@@ -1,9 +1,8 @@
 /**
- * ## index.js
- * an entry point for module based usage
+ * ## concierge.js
+ * an entry point for command line usage
  *
- *  - doesn't use config.ini
- *  - no command line options
+ *  - use config.ini and command line arguments
  */
 
 /**
@@ -15,21 +14,19 @@ var bootstrap           = require('./lib/bootstrap');
 var actions             = require('./lib/actions');
 
 /**
- * ## module.exports
- *
- * @param {Object} options
+ * ## shebang
  */
-module.exports = function(options) {
+(function() {
   // load plugins
   plugins.init();
   // load config and process CLI
-  config.init(_.extend(options, {
-    fromCli: false,
-    fromIni: false
-  }));
+  config.init({
+    fromCli: true,
+    fromIni: true
+  });
   bootstrap(directories, function() {
     actions(directories, function() {
       // Done
     });
   });
-};
+})();

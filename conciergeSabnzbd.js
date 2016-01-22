@@ -1,9 +1,9 @@
 /**
- * ## index.js
- * an entry point for module based usage
+ * ## conciergeSabnzbd.js
+ * an entry point for sab post processing
  *
- *  - doesn't use config.ini
- *  - no command line options
+ *  - no command line configuration
+ *  - arguments are from sab
  */
 
 /**
@@ -15,21 +15,20 @@ var bootstrap           = require('./lib/bootstrap');
 var actions             = require('./lib/actions');
 
 /**
- * ## module.exports
- *
- * @param {Object} options
+ * ## shebang
  */
-module.exports = function(options) {
+(function() {
   // load plugins
   plugins.init();
   // load config and process CLI
-  config.init(_.extend(options, {
+  config.init({
+    target: process.argv[2]
     fromCli: false,
-    fromIni: false
-  }));
+    fromIni: true
+  });
   bootstrap(directories, function() {
     actions(directories, function() {
       // Done
     });
   });
-};
+})();
