@@ -155,32 +155,6 @@ specified target or parent</p>
 <span class="nx">bootstrap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">directories</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">directory</span><span class="p">;</span>
 
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
-</div>
-<p>load plugins</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-  <span class="nx">plugins</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
-</div>
-<p>load config and process CLI</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-  <span class="nx">config</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
-  <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s1">&#39;initialized config&#39;</span><span class="p">);</span>
 
   <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
 
@@ -190,7 +164,7 @@ specified target or parent</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
 <p><code>config.target</code> means we're processing a single directory</p>
         </td>
@@ -209,7 +183,7 @@ specified target or parent</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
 <p><code>config.target</code> means we're processing children</p>
         </td>

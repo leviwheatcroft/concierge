@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>actions.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/actions.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#actions">actions</a>
+      </div>
+      <div class="heading h2">
+        <a href="#require%20%26amp%3B%20declarations">require &amp; declarations</a>
+      </div>
+      <div class="heading h2">
+        <a href="#config">config</a>
+      </div>
+      <div class="heading h2">
+        <a href="#actions">actions</a>
+      </div>
+      <div class="heading h2">
+        <a href="#module.exports">module.exports</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="actions">
+  <h2>
+    <a href="#actions" name="actions" class="pilcrow">&#182;</a>
+    actions
+  </h2>
+</div>
+
+
+<p>acts as a controller, groups functions into actions</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+
+<div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="require%20%26amp%3B%20declarations">
+  <h2>
+    <a href="#require%20%26amp%3B%20declarations" name="require%20%26amp%3B%20declarations" class="pilcrow">&#182;</a>
+    require &amp; declarations
+  </h2>
+</div>
+
+  </div>
+  <div class="body">
+  </div>
+</div>
+
+<p>require some things</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">async</span>               <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">_</span>                   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./underscore&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">plugins</span>             <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./plugins&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bootstrap</span>           <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./bootstrap&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">meta</span>                <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./meta&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">metaMedia</span>           <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./metaMedia&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">metaTmdb</span>            <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./metaTmdb&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">move</span>                <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./move&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">detectTypes</span>         <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./detectTypes&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">getConductor</span>        <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./getConductor&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">actions</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">runAction</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">actionConductors</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="config">
+  <h2>
+    <a href="#config" name="config" class="pilcrow">&#182;</a>
+    config
+  </h2>
+</div>
+
+
+<p>deal with configuration options specific to this module</p>
+  </div>
+  <div class="body"><ul>
+<li>action</li>
+</ul>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">config</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+  <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">action</span><span class="o">:</span> <span class="p">[</span>
+      <span class="s1">&#39;a&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;specify action (process|media|tmdb|update)&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;process&#39;</span>
+    <span class="p">]</span>
+  <span class="p">},</span>
+  <span class="nx">validation</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">actions</span><span class="p">),</span> <span class="nx">config</span><span class="p">.</span><span class="nx">action</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;invalid action: &#39;</span> <span class="o">+</span> <span class="nx">config</span><span class="p">.</span><span class="nx">action</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">actions</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fns</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">actionConductors</span><span class="p">[</span><span class="nx">action</span><span class="p">]</span> <span class="o">=</span> <span class="nx">getConductor</span><span class="p">(</span><span class="nx">actions</span><span class="p">[</span><span class="nx">config</span><span class="p">.</span><span class="nx">action</span><span class="p">],</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="actions">
+  <h2>
+    <a href="#actions" name="actions" class="pilcrow">&#182;</a>
+    actions
+  </h2>
+</div>
+
+
+<p>an object listing the functions included in the different available actions</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">actions</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">media</span><span class="o">:</span> <span class="p">[</span>
+    <span class="nx">meta</span><span class="p">.</span><span class="nx">retrieve</span><span class="p">,</span>
+    <span class="nx">metaMedia</span><span class="p">,</span>
+    <span class="nx">meta</span><span class="p">.</span><span class="nx">store</span>
+  <span class="p">],</span>
+  <span class="nx">tmdb</span><span class="o">:</span> <span class="p">[</span>
+    <span class="nx">meta</span><span class="p">.</span><span class="nx">retrieve</span><span class="p">,</span>
+    <span class="nx">metaTmdb</span><span class="p">,</span>
+    <span class="nx">meta</span><span class="p">.</span><span class="nx">store</span>
+  <span class="p">],</span>
+  <span class="nx">process</span><span class="o">:</span> <span class="p">[</span>
+    <span class="nx">meta</span><span class="p">.</span><span class="nx">retrieve</span><span class="p">,</span>
+    <span class="nx">metaMedia</span><span class="p">,</span>
+    <span class="nx">metaTmdb</span><span class="p">,</span>
+    <span class="nx">detectTypes</span><span class="p">,</span>
+    <span class="nx">plugins</span><span class="p">.</span><span class="nx">primary</span><span class="p">,</span>
+    <span class="nx">move</span><span class="p">,</span>
+    <span class="nx">meta</span><span class="p">.</span><span class="nx">store</span>
+  <span class="p">]</span>
+
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="module.exports">
+  <h2>
+    <a href="#module.exports" name="module.exports" class="pilcrow">&#182;</a>
+    module.exports
+  </h2>
+</div>
+
+
+<p>thin wrapper to launch specified action</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">actionConductors</span><span class="p">[</span><span class="nx">config</span><span class="p">.</span><span class="nx">action</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

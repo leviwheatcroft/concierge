@@ -75,6 +75,15 @@ You can override your `config.ini` with command line options ala
 nodejs index.js --target /downloads/movies/some-specific-release
 ```
 
+### more documentation
+
+[config.example.ini]() will give you a good run down of the available options
+and configuration.
+[onNoMedia.js]() is an example of how to write a plugin
+[fsItems.js]() contains the Directory class which is used by pretty much
+every module.
+[metaTmdb]() is where the "magic" happens
+
 ### Support
 
 Post an issue here or pm /u/Mr5o1 on reddit.

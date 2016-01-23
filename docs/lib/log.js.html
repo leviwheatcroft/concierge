@@ -48,8 +48,9 @@ winston instance</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">winston</span>             <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;winston&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">winston</span>             <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;winston&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">path</span>                <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">config</span>              <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">);</span>
 
 <span class="kd">var</span> <span class="nx">logger</span> <span class="o">=</span> <span class="k">new</span> <span class="p">(</span><span class="nx">winston</span><span class="p">.</span><span class="nx">Logger</span><span class="p">);</span>
 
@@ -85,7 +86,7 @@ winston instance</p>
       <span class="s1">&#39;l&#39;</span><span class="p">,</span>
       <span class="s1">&#39;file to write logs to&#39;</span><span class="p">,</span>
       <span class="s1">&#39;file&#39;</span><span class="p">,</span>
-      <span class="s1">&#39;concierge.log&#39;</span>
+      <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span> <span class="s1">&#39;concierge.log&#39;</span><span class="p">)</span>
     <span class="p">],</span>
     <span class="nx">logLevel</span><span class="o">:</span> <span class="p">[</span>
       <span class="kc">false</span><span class="p">,</span>
@@ -104,8 +105,13 @@ winston instance</p>
       <span class="nx">level</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">logLevel</span><span class="p">,</span>
       <span class="nx">handleExceptions</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
       <span class="nx">transports</span><span class="o">:</span> <span class="p">[</span>
-        <span class="k">new</span> <span class="p">(</span><span class="nx">winston</span><span class="p">.</span><span class="nx">transports</span><span class="p">.</span><span class="nx">Console</span><span class="p">)(),</span>
-        <span class="k">new</span> <span class="p">(</span><span class="nx">winston</span><span class="p">.</span><span class="nx">transports</span><span class="p">.</span><span class="nx">File</span><span class="p">)({</span> <span class="nx">filename</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">logFile</span> <span class="p">})</span>
+        <span class="k">new</span> <span class="p">(</span><span class="nx">winston</span><span class="p">.</span><span class="nx">transports</span><span class="p">.</span><span class="nx">Console</span><span class="p">)({</span>
+          <span class="nx">colorize</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+          <span class="nx">stringify</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}),</span>
+        <span class="k">new</span> <span class="p">(</span><span class="nx">winston</span><span class="p">.</span><span class="nx">transports</span><span class="p">.</span><span class="nx">File</span><span class="p">)({</span>
+          <span class="nx">filename</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">logFile</span>
+        <span class="p">})</span>
       <span class="p">],</span>
       <span class="nx">colorize</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">});</span>
