@@ -17,6 +17,7 @@ var actions             = require('./lib/actions');
  * ## shebang
  */
 (function() {
+  var directories = [];
   // load plugins
   plugins.init();
   // load config and process CLI
