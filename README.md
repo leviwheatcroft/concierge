@@ -77,13 +77,13 @@ nodejs index.js --target /downloads/movies/some-specific-release
 
 ### more documentation
 
-[config.example.ini](http://leviwheatcroft.github.io/concierge/config.example.ini)
+ * [config.example.ini](http://leviwheatcroft.github.io/concierge/config.example.ini)
 will give you a good run down of the available options and configuration.
-[onNoMedia.js](http://leviwheatcroft.github.io/concierge/docs/lib/plugins/onNoMedia.js.html)
+ * [onNoMedia.js](http://leviwheatcroft.github.io/concierge/docs/lib/plugins/onNoMedia.js.html)
 is an example of how to write a plugin
-[fsItems.js](http://leviwheatcroft.github.io/concierge/docs/lib/fsItems.js.html)
+ * [fsItems.js](http://leviwheatcroft.github.io/concierge/docs/lib/fsItems.js.html)
 contains the Directory class which is used by pretty much every module.
-[metaTmdb](http://leviwheatcroft.github.io/concierge/docs/lib/metaTmdb.js.html)
+ * [metaTmdb](http://leviwheatcroft.github.io/concierge/docs/lib/metaTmdb.js.html)
 is where the "magic" happens
 
 ### Support
