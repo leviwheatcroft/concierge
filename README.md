@@ -74,3 +74,7 @@ You can override your `config.ini` with command line options ala
 ```
 nodejs index.js --target /downloads/movies/some-specific-release
 ```
+
+### Support
+
+Post an issue here or pm /u/Mr5o1 on reddit.
