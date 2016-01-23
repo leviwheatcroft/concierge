@@ -3,8 +3,10 @@
 A nodejs CLI app to curate scene movie releases.
 
   * detects movie from either .nfo or path, reasonably accurate
-  * cool plugin architecture (extendable)
+  * clean code & cool plugin architecture
   * configurable naming convention
+  * works nicely as a sabnzbd post processing script
+
 
 ### warning
 
@@ -19,6 +21,7 @@ let it go, because it will likely do some catastrophic damage.
  * create `config.ini` from `config.example.ini`
  * set your tmdb apiKey, parent, and output
  * run with `node concierge.js`
+
 
 ### installation & setup (detailed)
 
@@ -65,15 +68,42 @@ options can be set from CLI args or from config.ini, CLI takes precedence.
 
 __run__
 
-Running with no arguments will juse all args from your `config.ini`.
 ```
 nodejs concierge.js
 ```
 
-You can override your `config.ini` with command line options ala
+
+```
+
+### command line usage
+
+Concierge will read options from it's `config.ini` but those options will be
+overwritten by anything you pass in from the command line.
+
+Suppose you have a `/srv/downloads/movies/` directory and you want concierge
+to process all children of that directory, you add something like
+`source=/srv/downloads/movies/` to your `config.ini`.
+
+If for whatever reason you wanted concierge to process a single release, you
+use the `--target` option which only ever processes a single directory (so
+`--source` will be ignored).
+
 ```
 nodejs concierge.js --target /downloads/movies/some-specific-release
 ```
+
+`-h` or `--help` will give you the full list of command line options, most
+of which are self explanatory. All command line options are also documented in
+`config.example.ini`.
+
+### sabnzbd post processing
+
+You just specify the included `conciergeSabnzbd.sh` as your post processing
+script. You'll need to edit this that script to show the correct path to
+concierge. Sabnzbd expects all your post processing scripts to be in one folder,
+so if you're using sickbeard post processing or whatever just copy
+`conciergeSabnzbd.sh` to your sickbeard autoProcessTV directory or wherever.
+
 
 ### more documentation
 
