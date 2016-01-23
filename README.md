@@ -18,7 +18,7 @@ let it go, because it will likely do some catastrophic damage.
  * then clone this repo, then `npm install`
  * create `config.ini` from `config.example.ini`
  * set your tmdb apiKey, parent, and output
- * run with `node index.js`
+ * run with `node concierge.js`
 
 ### installation & setup (detailed)
 
@@ -67,12 +67,12 @@ __run__
 
 Running with no arguments will juse all args from your `config.ini`.
 ```
-nodejs index.js
+nodejs concierge.js
 ```
 
 You can override your `config.ini` with command line options ala
 ```
-nodejs index.js --target /downloads/movies/some-specific-release
+nodejs concierge.js --target /downloads/movies/some-specific-release
 ```
 
 ### more documentation
