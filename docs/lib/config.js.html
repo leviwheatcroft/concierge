@@ -292,7 +292,6 @@ command.option(
       <span class="k">throw</span> <span class="s1">&#39;cant find config: &#39;</span> <span class="o">+</span> <span class="nx">configFile</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="p">}</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">configFile</span><span class="p">);</span>
   <span class="nx">iniFile</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">configFile</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">);</span>
   <span class="nx">iniFile</span> <span class="o">=</span> <span class="nx">ini</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">iniFile</span><span class="p">);</span>
   <span class="nx">iniFile</span> <span class="o">=</span> <span class="nx">filterOptions</span><span class="p">(</span><span class="nx">iniFile</span><span class="p">);</span>

@@ -31,6 +31,12 @@
         <a href="#installation%20%26amp%3B%20setup%20(detailed)">installation &amp; setup (detailed)</a>
       </div>
       <div class="heading h3">
+        <a href="#command%20line%20usage">command line usage</a>
+      </div>
+      <div class="heading h3">
+        <a href="#sabnzbd%20post%20processing">sabnzbd post processing</a>
+      </div>
+      <div class="heading h3">
         <a href="#more%20documentation">more documentation</a>
       </div>
       <div class="heading h3">
@@ -52,8 +58,9 @@
 
 <ul>
 <li>detects movie from either .nfo or path, reasonably accurate</li>
-<li>cool plugin architecture (extendable)</li>
+<li>clean code &amp; cool plugin architecture</li>
 <li>configurable naming convention</li>
+<li>works nicely as a sabnzbd post processing script</li>
 </ul>
 
 
@@ -83,7 +90,7 @@ let it go, because it will likely do some catastrophic damage.</p>
 <li>then clone this repo, then <code>npm install</code></li>
 <li>create <code>config.ini</code> from <code>config.example.ini</code></li>
 <li>set your tmdb apiKey, parent, and output</li>
-<li>run with <code>node index.js</code></li>
+<li>run with <code>node concierge.js</code></li>
 </ul>
 
 
@@ -138,15 +145,50 @@ options can be set from CLI args or from config.ini, CLI takes precedence.</p>
 
 <p><strong>run</strong></p>
 
-<p>Running with no arguments will juse all args from your <code>config.ini</code>.</p>
-
-<div class='highlight'><pre><code language=''>nodejs index.js
+<div class='highlight'><pre><code language=''>nodejs concierge.js
 </code></pre></div>
 
-<p>You can override your <code>config.ini</code> with command line options ala</p>
 
-<div class='highlight'><pre><code language=''>nodejs index.js --target /downloads/movies/some-specific-release
+<div class="pilwrap" id="command%20line%20usage">
+  <h3>
+    <a href="#command%20line%20usage" name="command%20line%20usage" class="pilcrow">&#182;</a>
+    command line usage
+  </h3>
+</div>
+
+
+<p>Concierge will read options from it's <code>config.ini</code> but those options will be
+overwritten by anything you pass in from the command line.</p>
+
+<p>Suppose you have a <code>/srv/downloads/movies/</code> directory and you want concierge
+to process all children of that directory, you add something like
+<code>source=/srv/downloads/movies/</code> to your <code>config.ini</code>.</p>
+
+<p>If for whatever reason you wanted concierge to process a single release, you
+use the <code>--target</code> option which only ever processes a single directory (so
+<code>--source</code> will be ignored).</p>
+
+<div class='highlight'><pre><code language=''>nodejs concierge.js --target /downloads/movies/some-specific-release
 </code></pre></div>
+
+<p><code>-h</code> or <code>--help</code> will give you the full list of command line options, most
+of which are self explanatory. All command line options are also documented in
+<code>config.example.ini</code>.</p>
+
+
+<div class="pilwrap" id="sabnzbd%20post%20processing">
+  <h3>
+    <a href="#sabnzbd%20post%20processing" name="sabnzbd%20post%20processing" class="pilcrow">&#182;</a>
+    sabnzbd post processing
+  </h3>
+</div>
+
+
+<p>You just specify the included <code>conciergeSabnzbd.sh</code> as your post processing
+script. You'll need to edit this that script to show the correct path to
+concierge. Sabnzbd expects all your post processing scripts to be in one folder,
+so if you're using sickbeard post processing or whatever just copy
+<code>conciergeSabnzbd.sh</code> to your sickbeard autoProcessTV directory or wherever.</p>
 
 
 <div class="pilwrap" id="more%20documentation">
