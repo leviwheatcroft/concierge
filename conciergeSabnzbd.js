@@ -29,6 +29,8 @@ var actions             = require('./lib/actions');
   });
   bootstrap(directories, function() {
     actions(directories, function() {
+      // close knex pool
+      process.exit();
       // Done
     });
   });

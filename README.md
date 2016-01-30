@@ -48,6 +48,14 @@ __install avprobe__
 sudo apt-get install libav-tools
 ```
 
+__install sqlite3__
+this is optional, you can use the `.meta` file meta storage method if you
+prefer.
+
+```
+sudo apt-get install sqlite3
+```
+
 __clone & populate__
 
 ```
