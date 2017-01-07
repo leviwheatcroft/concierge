@@ -8,28 +8,37 @@
 /**
  * ## require & declare
  */
-var plugins             = require('./lib/plugins');
-var config              = require('./lib/config');
-var bootstrap           = require('./lib/bootstrap');
+var Promise             = require('bluebird');
 var actions             = require('./lib/actions');
+var bootstrap           = require('./lib/bootstrap');
+var config              = require('./lib/config');
+var plugins             = require('./lib/plugins');
 
 /**
  * ## shebang
  */
 (function() {
   var directories = [];
+  // create queue
+  Promise.resolve()
   // load plugins
-  plugins.init();
+  .then(function() {
+    plugins.init()
+  })
   // load config and process CLI
-  config.init({
-    fromCli: true,
-    fromIni: true
-  });
-  bootstrap(directories, function() {
-    actions(directories, function() {
-      // close knex pool
-      process.exit();
-      // Done
+  .then(function() {
+    return config.init({
+      fromCli: true,
+      fromIni: true
     });
+  })
+  // run defined action
+  .then(function() {
+    actions[config.action]();
+  })
+  .catch(function(e) {
+    console.log('some catastrophic error occurred');
+    console.log(e);
   });
+
 })();
